@@ -1,5 +1,6 @@
 "use server";
 
+import { getCurrentUserProfile, isAdminRole } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { User } from "@/types/User";
@@ -181,4 +182,20 @@ export async function UpdateUserPassword({
   await supabase.auth.signOut();
 
   return { success: true };
+}
+
+export async function verifyAdmin(): Promise<
+  { success: true; user: User } | { success: false; message: string }
+> {
+  const user = await getCurrentUserProfile();
+
+  if (!user) {
+    return { success: false, message: "User not authenticated" };
+  }
+
+  if (!isAdminRole(user.role)) {
+    return { success: false, message: "Unauthorized: Admin access required" };
+  }
+
+  return { success: true, user };
 }

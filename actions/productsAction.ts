@@ -3,12 +3,18 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "@/constants/cacheTages";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+
 import {
+  AdminProductListItem,
   ProductDetails,
   ProductListingQuery,
   ProductListItem,
   ProductPaginationState,
 } from "@/types/Product";
+import { AdminProductFilters } from "@/types/Admin";
+import { verifyAdmin } from "./userAction";
+import { revalidateCatalogPaths } from "@/lib/admin/revalidate";
 
 export const getNewArrivals = async (
   limit = 4,
@@ -263,3 +269,83 @@ export const getProductPriceRange = async (): Promise<
   };
 };
 
+export const getProducts = async function getProducts({
+  search,
+  isTopSelling,
+  isNewArrival,
+  categoryId,
+  showDeleted,
+}: AdminProductFilters = {}): Promise<
+  | { success: true; data: AdminProductListItem[] }
+  | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.products);
+  cacheLife("hours");
+
+  const supabase = createAdminClient();
+
+  let query = supabase
+    .from("products_with_min_price")
+    .select("*, variants:product_variants(stock)")
+    .order("created_at", { ascending: false });
+
+  if (search) {
+    query = query.ilike("title", `%${search}%`);
+  }
+
+  if (isTopSelling) {
+    query = query
+      .not("top_selling_rank", "is", null)
+      .order("top_selling_rank", { ascending: true });
+  }
+
+  if (isNewArrival) {
+    query = query
+      .not("new_arrival_rank", "is", null)
+      .order("new_arrival_rank", { ascending: true });
+  }
+
+  if (categoryId) {
+    query = query.eq("category_id", categoryId);
+  }
+
+  if (!showDeleted) {
+    query = query.eq("is_deleted", false);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return { success: false, message: "Failed to fetch products" };
+  }
+
+  return { success: true, data: data as AdminProductListItem[] };
+};
+
+export async function deleteProduct(
+  id: number,
+): Promise<{ success: true } | { success: false; message: string }> {
+  const verification = await verifyAdmin();
+  if (!verification.success) return verification;
+
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("products")
+    .update({
+      is_deleted: true,
+      new_arrival_rank: null,
+      top_selling_rank: null,
+      category_rank: null,
+      category_id: null,
+    })
+    .eq("id", id);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  revalidateCatalogPaths(id);
+  return { success: true };
+}

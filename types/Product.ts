@@ -48,8 +48,12 @@ export type ProductDetails = Product & {
   images: ProductImage[];
 };
 
-
-export type SortOption = 'newest' | 'price_asc' | 'price_desc' | 'top_selling' | 'new_arrivals';
+export type SortOption =
+  | "newest"
+  | "price_asc"
+  | "price_desc"
+  | "top_selling"
+  | "new_arrivals";
 
 export type ProductListingQuery = {
   search?: string;
@@ -70,3 +74,27 @@ export type ProductPaginationState = {
   pageSize: number;
   pageCount: number;
 };
+
+export type AdminProductListItem = ProductListItem & {
+  is_deleted: boolean;
+  variants?: { stock: number }[];
+};
+
+export interface CreateProductInput {
+  title: string;
+  description?: string;
+  category_id?: number;
+  image_cover?: string;
+  new_arrival_rank?: number | null;
+  top_selling_rank?: number | null;
+  category_rank?: number | null;
+  variants: {
+    color: string;
+    size: string;
+    price: number;
+    price_before?: number;
+    stock: number;
+    sku?: string;
+  }[];
+  images: string[];
+}
