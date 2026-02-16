@@ -6,6 +6,7 @@ import CategoryListContent from "@/components/admin/categories/CategoryListConte
 import AdminCategoryListSkeleton from "@/components/skeleton/AdminCategoryListSkeleton";
 
 export default function AdminCategoriesPage() {
+  const key = "categories-list";
   return (
     <div className="space-y-6">
       <AdminPageHeader
