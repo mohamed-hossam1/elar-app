@@ -56,7 +56,7 @@ export function StatusDistribution({ distributions }: StatusDistributionProps) {
         </div>
         <div className="grid grid-cols-1 gap-3">
           {paymentEntries.map(([method, count]) => (
-            <div key={method} className="flex items-center justify-between p-3 border border-black/5 bg-black/[0.01] hover:bg-black/[0.03] transition-colors">
+            <div key={method} className="flex items-center justify-between p-3 border border-black/5 bg-black/1 hover:bg-black/3 transition-colors">
               <span className="text-xs font-bold uppercase tracking-tight">{method.replace('_', ' ')}</span>
               <div className="flex items-center gap-3">
                 <span className="text-xs font-black">{count}</span>

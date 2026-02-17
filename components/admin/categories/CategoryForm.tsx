@@ -2,14 +2,14 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Category } from "@/types/Product";
+import { Category } from "@/types/Category";
 import { createCategory, updateCategory } from "@/actions/categoriesAction";
 import {
   AdminField,
   AdminNotice,
   adminInputClassName,
 } from "@/components/admin/AdminUI";
-import { Uploader } from "@/components/uploadImages/Uploader";
+import { Uploader } from "@/components/imageKit/Uploader";
 
 interface CategoryFormProps {
   category?: Category;

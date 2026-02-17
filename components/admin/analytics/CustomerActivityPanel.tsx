@@ -18,7 +18,7 @@ export function CustomerActivityPanel({ activity }: CustomerActivityPanelProps) 
     <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {metrics.map((m) => (
-          <div key={m.label} className="border border-black p-4 bg-black/[0.02]">
+          <div key={m.label} className="border border-black p-4 bg-black/2">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 mb-2">{m.label}</p>
             <p className="font-integral text-2xl font-black">{m.value}</p>
             <p className="mt-1 text-[10px] text-black/40 font-medium">{m.sub}</p>

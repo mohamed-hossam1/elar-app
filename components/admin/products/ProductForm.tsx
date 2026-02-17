@@ -2,7 +2,8 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Category, ProductDetails, CreateProductInput } from "@/types/Product";
+import { ProductDetails, CreateProductInput } from "@/types/Product";
+import { Category } from "@/types/Category";
 import { createProduct, updateFullProduct } from "@/actions/productsAction";
 import {
   AdminField,
@@ -12,7 +13,7 @@ import {
   adminTextareaClassName,
   adminSelectClassName,
 } from "@/components/admin/AdminUI";
-import { Uploader } from "@/components/uploadImages/Uploader";
+import { Uploader } from "@/components/imageKit/Uploader";
 import VariantEditor, { VariantDraft } from "./VariantEditor";
 
 interface ProductFormProps {
@@ -26,15 +27,15 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  
   const [title, setTitle] = useState(product?.title || "");
   const [description, setDescription] = useState(product?.description || "");
-  const [categoryId, setCategoryId] = useState<number | "">(product?.category_id || "");
+  const [categoryId, setCategoryId] = useState<number | "">(
+    product?.category_id || "",
+  );
   const [imageCover, setImageCover] = useState(product?.image_cover || "");
   const [isNewArrival, setIsNewArrival] = useState(!!product?.new_arrival_rank);
   const [isTopSelling, setIsTopSelling] = useState(!!product?.top_selling_rank);
 
-  
   useEffect(() => {
     if (!product) {
       setTitle("");
@@ -43,7 +44,16 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
       setImageCover("");
       setIsNewArrival(false);
       setIsTopSelling(false);
-      setVariants([{ color: "", size: "", sku: "", price: "", price_before: "", stock: "" }]);
+      setVariants([
+        {
+          color: "",
+          size: "",
+          sku: "",
+          price: "",
+          price_before: "",
+          stock: "",
+        },
+      ]);
       setGalleryUrls([]);
     }
   }, [product]);
@@ -56,11 +66,13 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
       price: v.price,
       price_before: v.price_before || "",
       stock: v.stock,
-    })) || [{ color: "", size: "", sku: "", price: "", price_before: "", stock: "" }]
+    })) || [
+      { color: "", size: "", sku: "", price: "", price_before: "", stock: "" },
+    ],
   );
 
   const [galleryUrls, setGalleryUrls] = useState<string[]>(
-    product?.images.map((img) => img.url) || []
+    product?.images.map((img) => img.url) || [],
   );
 
   const validate = () => {
@@ -75,8 +87,10 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
       variants.forEach((v, i) => {
         if (!v.color.trim()) errors[`variant.${i}.color`] = "Required";
         if (!v.size.trim()) errors[`variant.${i}.size`] = "Required";
-        if (v.price === "" || v.price < 0) errors[`variant.${i}.price`] = "Required";
-        if (v.stock === "" || v.stock < 0) errors[`variant.${i}.stock`] = "Required";
+        if (v.price === "" || v.price < 0)
+          errors[`variant.${i}.price`] = "Required";
+        if (v.stock === "" || v.stock < 0)
+          errors[`variant.${i}.stock`] = "Required";
       });
     }
 
@@ -93,17 +107,14 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
       description: description || undefined,
       category_id: categoryId || undefined,
       image_cover: imageCover,
-      new_arrival_rank: isNewArrival
-        ? product?.new_arrival_rank || -1
-        : null,
-      top_selling_rank: isTopSelling
-        ? product?.top_selling_rank || -1
-        : null,
+      new_arrival_rank: isNewArrival ? product?.new_arrival_rank || -1 : null,
+      top_selling_rank: isTopSelling ? product?.top_selling_rank || -1 : null,
       variants: variants.map((v) => ({
         color: v.color,
         size: v.size,
         price: Number(v.price),
-        price_before: v.price_before !== "" ? Number(v.price_before) : undefined,
+        price_before:
+          v.price_before !== "" ? Number(v.price_before) : undefined,
         stock: Number(v.stock),
         sku: v.sku || undefined,
       })),
@@ -117,14 +128,22 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
 
       if (res.success) {
         if (!product) {
-          
           setTitle("");
           setDescription("");
           setCategoryId("");
           setImageCover("");
           setIsNewArrival(false);
           setIsTopSelling(false);
-          setVariants([{ color: "", size: "", sku: "", price: "", price_before: "", stock: "" }]);
+          setVariants([
+            {
+              color: "",
+              size: "",
+              sku: "",
+              price: "",
+              price_before: "",
+              stock: "",
+            },
+          ]);
           setGalleryUrls([]);
         }
         router.push("/admin/products");
@@ -143,7 +162,10 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
         </AdminNotice>
       )}
 
-      <AdminSection title="General Information" description="Basic product details shown to shoppers.">
+      <AdminSection
+        title="General Information"
+        description="Basic product details shown to shoppers."
+      >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <AdminField label="Product Title" error={fieldErrors.title}>
@@ -171,7 +193,9 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
           <AdminField label="Category" error={fieldErrors.categoryId}>
             <select
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value ? parseInt(e.target.value) : "")}
+              onChange={(e) =>
+                setCategoryId(e.target.value ? parseInt(e.target.value) : "")
+              }
               className={adminSelectClassName}
             >
               <option value="">Select Category</option>
@@ -195,7 +219,10 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
         </div>
       </AdminSection>
 
-      <AdminSection title="Merchandising" description="Toggle product visibility in special collections.">
+      <AdminSection
+        title="Merchandising"
+        description="Toggle product visibility in special collections."
+      >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <label className="flex cursor-pointer items-center gap-4 border border-black bg-white p-6 transition hover:bg-black/5">
             <input
@@ -240,7 +267,9 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
           errors={fieldErrors}
         />
         {fieldErrors.variants && (
-          <p className="mt-2 text-sm font-bold text-red-600">{fieldErrors.variants}</p>
+          <p className="mt-2 text-sm font-bold text-red-600">
+            {fieldErrors.variants}
+          </p>
         )}
       </AdminSection>
 
@@ -268,7 +297,11 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
           disabled={isPending}
           className="inline-flex border border-black bg-black px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black disabled:opacity-50"
         >
-          {isPending ? "Saving..." : product ? "Update Product" : "Create Product"}
+          {isPending
+            ? "Saving..."
+            : product
+              ? "Update Product"
+              : "Create Product"}
         </button>
       </div>
     </form>

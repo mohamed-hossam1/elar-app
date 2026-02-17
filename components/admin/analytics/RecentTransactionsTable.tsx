@@ -41,7 +41,7 @@ export function RecentTransactionsTable({ transactions }: RecentTransactionsTabl
     <div className="border border-black overflow-hidden bg-white">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-black text-white text-[10px] font-black uppercase tracking-[0.1em]">
+          <thead className="bg-black text-white text-[10px] font-black uppercase tracking-widest">
             <tr>
               <th className="text-left py-4 px-6">Transaction</th>
               <th className="text-left py-4 px-6">Customer</th>
@@ -53,7 +53,7 @@ export function RecentTransactionsTable({ transactions }: RecentTransactionsTabl
           </thead>
           <tbody className="divide-y divide-black/10">
             {transactions.map((tx) => (
-              <tr key={tx.id} className="hover:bg-black/[0.03] transition-colors group">
+              <tr key={tx.id} className="hover:bg-black/3 transition-colors group">
                 <td className="py-4 px-6">
                   <p className="font-black text-xs uppercase tracking-tight">#{tx.id}</p>
                   <p className="text-[10px] text-black/40 font-medium">
