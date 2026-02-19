@@ -2,15 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Store,
-} from "lucide-react";
+import { Store } from "lucide-react";
 
 import ROUTES from "@/constants/routes";
 import { ADMIN_NAV_ITEMS } from "@/lib/admin";
 import { buildBreadcrumbs, cn } from "@/lib/utils";
-
-
 
 export default function AdminChrome({
   currentUser,
@@ -34,7 +30,7 @@ export default function AdminChrome({
             <p className="text-[11px] font-black uppercase tracking-[0.35em] text-black/45">
               Platform Admin
             </p>
-            <h1 className="font-integral text-3xl font-black uppercase tracking-[0.1em] text-black">
+            <h1 className="font-integral text-3xl font-black uppercase tracking-widest text-black">
               elar.app
             </h1>
           </div>
@@ -45,7 +41,8 @@ export default function AdminChrome({
               const isActive =
                 item.href === ROUTES.ADMIN
                   ? pathname === item.href
-                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  : pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
 
               return (
                 <Link
@@ -77,7 +74,6 @@ export default function AdminChrome({
                 {currentUser.email || "No email"}
               </p>
               <div className="mt-4 flex items-center justify-between gap-3">
-
                 <Link
                   href={ROUTES.HOME}
                   className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.28em] text-black/70 transition hover:text-black"
@@ -102,7 +98,9 @@ export default function AdminChrome({
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-black/70">
                   {breadcrumbs.map((crumb, index) => (
                     <span key={crumb.href} className="flex items-center gap-2">
-                      {index > 0 ? <span className="text-black/25">/</span> : null}
+                      {index > 0 ? (
+                        <span className="text-black/25">/</span>
+                      ) : null}
                       <Link
                         href={crumb.href}
                         className={cn(
@@ -138,7 +136,8 @@ export default function AdminChrome({
                 const isActive =
                   item.href === ROUTES.ADMIN
                     ? pathname === item.href
-                    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    : pathname === item.href ||
+                      pathname.startsWith(`${item.href}/`);
 
                 return (
                   <Link

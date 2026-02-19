@@ -107,7 +107,7 @@ export default function SavedAddressList() {
                       <Building className="w-4 h-4 text-black/20" />
                       {address.full_name}
                     </p>
-                    <p className="text-sm font-bold text-black/50 uppercase tracking-[0.1em] pl-7 leading-relaxed">
+                    <p className="text-sm font-bold text-black/50 uppercase tracking-widest pl-7 leading-relaxed">
                       {address.address_line}<br />
                       {address.area}, {address.city}
                     </p>
