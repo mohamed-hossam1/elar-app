@@ -1,3 +1,4 @@
+"use server"
 import { CACHE_TAGS } from "@/constants/cacheTages";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminPromoFilters } from "@/types/Admin";

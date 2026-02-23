@@ -27,17 +27,17 @@ export default function UserTable({ users }: UserTableProps) {
           <table className="w-full text-left text-sm">
             <thead className="border-b border-black bg-admin-bg-alt">
               <tr>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px]">Name</th>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px]">Email</th>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px]">Phone</th>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px]">Role</th>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px]">Joined</th>
-                <th className="p-4 font-black uppercase tracking-[0.1em] text-[11px] text-right">Actions</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px]">Name</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px]">Email</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px]">Phone</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px]">Role</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px]">Joined</th>
+                <th className="p-4 font-black uppercase tracking-widest text-[11px] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black/10">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-black/[0.02] transition-colors">
+                <tr key={user.id} className="hover:bg-black/2 transition-colors">
                   <td className="p-4 font-medium text-black">{user.name || "Unnamed"}</td>
                   <td className="p-4 text-black/70">{user.email}</td>
                   <td className="p-4 text-black/70">{user.phone || "N/A"}</td>

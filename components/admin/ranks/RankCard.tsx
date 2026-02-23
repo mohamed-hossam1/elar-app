@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2 } from "lucide-react";
-import Image from "@/components/uploadImages/ImageOptimization";
+import Image from "@/components/imageKit/ImageOptimization";
 import { RankedProduct } from "@/types/Rank";
 
 interface RankCardProps {

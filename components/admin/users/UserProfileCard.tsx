@@ -2,8 +2,8 @@
 
 import { User } from "@/types/User";
 import { AdminSection, AdminField } from "@/components/admin/AdminUI";
-import UserRoleSelect from "@/components/admin/UserRoleSelect";
-import DeleteUserAccessButton from "@/components/admin/DeleteUserAccessButton";
+import UserRoleSelect from "@/components/admin/users/UserRoleSelect";
+import DeleteUserAccessButton from "@/components/admin/users/DeleteUserAccessButton";
 import { Data } from "@/lib/data";
 
 interface UserProfileCardProps {
@@ -17,22 +17,22 @@ export default function UserProfileCard({ user, isSelf }: UserProfileCardProps) 
       <AdminSection title="Account Metadata" description="Primary identification and system metadata.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <AdminField label="Full Name">
-            <p className="border border-black bg-black/[0.03] px-4 py-3 text-sm font-medium text-black">
+            <p className="border border-black bg-black/3 px-4 py-3 text-sm font-medium text-black">
               {user.name || "N/A"}
             </p>
           </AdminField>
           <AdminField label="Email Address">
-            <p className="border border-black bg-black/[0.03] px-4 py-3 text-sm font-medium text-black">
+            <p className="border border-black bg-black/3 px-4 py-3 text-sm font-medium text-black">
               {user.email}
             </p>
           </AdminField>
           <AdminField label="Phone Number">
-            <p className="border border-black bg-black/[0.03] px-4 py-3 text-sm font-medium text-black">
+            <p className="border border-black bg-black/3 px-4 py-3 text-sm font-medium text-black">
               {user.phone || "N/A"}
             </p>
           </AdminField>
           <AdminField label="Registration Date">
-            <p className="border border-black bg-black/[0.03] px-4 py-3 text-sm font-medium text-black">
+            <p className="border border-black bg-black/3 px-4 py-3 text-sm font-medium text-black">
               {user.created_at ? Data(user.created_at)["24h"] : "N/A"}
             </p>
           </AdminField>

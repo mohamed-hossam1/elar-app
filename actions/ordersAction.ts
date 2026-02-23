@@ -1,6 +1,6 @@
+"use server";
 import { ADMIN_ORDER_STATUSES } from '@/lib/admin';
 import { isAdminOrderStatus } from '@/lib/admin';
-"use server";
 
 import {
   revalidateOrderPaths,

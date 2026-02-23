@@ -48,7 +48,7 @@ export default function UserFilterBar() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6 p-4 border border-black bg-white">
       <div>
-        <label className="block text-[10px] font-black uppercase tracking-[0.1em] mb-1">Search</label>
+        <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Search</label>
         <input 
           type="text" 
           value={search}
@@ -58,7 +58,7 @@ export default function UserFilterBar() {
         />
       </div>
       <div>
-        <label className="block text-[10px] font-black uppercase tracking-[0.1em] mb-1">Role</label>
+        <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Role</label>
         <select 
           value={role} 
           onChange={(e) => { setRole(e.target.value); updateFilters("role", e.target.value); }} 
@@ -70,7 +70,7 @@ export default function UserFilterBar() {
         </select>
       </div>
       <div>
-        <label className="block text-[10px] font-black uppercase tracking-[0.1em] mb-1">Date From</label>
+        <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Date From</label>
         <input 
           type="date" 
           value={dateFrom}
@@ -79,7 +79,7 @@ export default function UserFilterBar() {
         />
       </div>
       <div>
-        <label className="block text-[10px] font-black uppercase tracking-[0.1em] mb-1">Date To</label>
+        <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Date To</label>
         <input 
           type="date" 
           value={dateTo}
@@ -91,7 +91,7 @@ export default function UserFilterBar() {
         <button 
           onClick={handleClear}
           disabled={isPending}
-          className="w-full h-[46px] px-3 border border-black bg-white hover:bg-black hover:text-white transition text-[10px] font-black uppercase tracking-[0.1em] disabled:opacity-50"
+          className="w-full h-[46px] px-3 border border-black bg-white hover:bg-black hover:text-white transition text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
         >
           Clear Filters
         </button>

@@ -1,3 +1,4 @@
+"use server"
 import { CACHE_TAGS } from "@/constants/cacheTages";
 import { revalidateTag } from "next/cache";
 
@@ -8,7 +9,7 @@ function revalidateTags(tags: string[]) {
   }
 }
 
-export function revalidateCatalogPaths(productId?: number | string) {
+export async function revalidateCatalogPaths(productId?: number | string) {
   revalidateTags([CACHE_TAGS.products, CACHE_TAGS.categories]);
 
   if (productId) {
@@ -16,7 +17,7 @@ export function revalidateCatalogPaths(productId?: number | string) {
   }
 }
 
-export function revalidateCategoryPaths(categoryId?: number | string) {
+export async function revalidateCategoryPaths(categoryId?: number | string) {
   revalidateTags([CACHE_TAGS.categories]);
 
   if (categoryId) {
@@ -24,15 +25,15 @@ export function revalidateCategoryPaths(categoryId?: number | string) {
   }
 }
 
-export function revalidatePromoPaths(promoId?: number | string) {
+export async function revalidatePromoPaths(promoId?: number | string) {
   revalidateTags([CACHE_TAGS.promoCodes]);
 }
 
-export function revalidateDeliveryPaths(deliveryId?: number | string) {
+export async function revalidateDeliveryPaths(deliveryId?: number | string) {
   revalidateTags([CACHE_TAGS.delivery]);
 }
 
-export function revalidateOrderPaths(orderId?: number | string) {
+export async function revalidateOrderPaths(orderId?: number | string) {
   revalidateTags([CACHE_TAGS.orders]);
 
   if (orderId) {
@@ -40,7 +41,7 @@ export function revalidateOrderPaths(orderId?: number | string) {
   }
 }
 
-export function revalidateUserPaths(userId?: string) {
+export async function revalidateUserPaths(userId?: string) {
   revalidateTags([CACHE_TAGS.users]);
 
   if (userId) {
