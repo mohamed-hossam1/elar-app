@@ -1,12 +1,28 @@
 "use client";
 
-import Image, { ImageProps } from "next/image";
-import { useState } from "react";
+import Image, { ImageLoaderProps, ImageProps } from "next/image";
+import { useMemo, useState } from "react";
 
-const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
+const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
 
-function buildImageUrl(src: string, width?: number | string, quality?: number | string) {
-  if (!urlEndpoint || urlEndpoint.includes("6gp4ra1mb") || !src) {
+function isValidImageKitEndpoint(endpoint?: string) {
+  return !!endpoint && !endpoint.includes("6gp4ra1mb");
+}
+
+function normalizeSrc(src: ImageProps["src"]): string {
+  if (typeof src === "string") {
+    return src;
+  }
+
+  if ("src" in src) {
+    return src.src;
+  }
+
+  return "";
+}
+
+function buildImageUrl(src: string, width?: number, quality?: number) {
+  if (!isValidImageKitEndpoint(urlEndpoint) || !src) {
     return src;
   }
 
@@ -17,15 +33,24 @@ function buildImageUrl(src: string, width?: number | string, quality?: number | 
     "f-auto",
   ].join(",");
 
-  return `${urlEndpoint}/tr:${params}${src.startsWith("/") ? src : `/${src}`}`;
+  const normalizedPath = src.startsWith("/") ? src : `/${src}`;
+
+  return `${urlEndpoint}/tr:${params}${normalizedPath}`;
 }
 
 function buildBlurUrl(src: string) {
-  if (!urlEndpoint || urlEndpoint.includes("6gp4ra1mb") || !src) {
+  if (!isValidImageKitEndpoint(urlEndpoint) || !src) {
     return src;
   }
-  return `${urlEndpoint}/tr:q-10,bl-90${src.startsWith("/") ? src : `/${src}`}`;
+
+  const normalizedPath = src.startsWith("/") ? src : `/${src}`;
+
+  return `${urlEndpoint}/tr:w-40,q-10,bl-90,f-auto${normalizedPath}`;
 }
+
+const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+  return buildImageUrl(src, width, quality);
+};
 
 type Props = ImageProps & {
   blur?: boolean;
@@ -33,36 +58,44 @@ type Props = ImageProps & {
 
 export default function ImageOptimization({
   src,
-  width,
   quality,
   sizes = "100vw",
   blur = true,
+  style,
   ...props
 }: Props) {
-  const [showPlaceholder, setShowPlaceholder] = useState(true);
-  const normalizedSrc = typeof src === 'string' ? src : (src as any)?.src || "";
-  const finalSrc = buildImageUrl(normalizedSrc, width, quality);
-  const blurSrc = buildBlurUrl(normalizedSrc);
-  const isUsingImageKit = !!(urlEndpoint && !urlEndpoint.includes("6gp4ra1mb"));
+  const [isLoading, setIsLoading] = useState(true);
+
+  const normalizedSrc = useMemo(() => normalizeSrc(src), [src]);
+
+  const blurSrc = useMemo(() => buildBlurUrl(normalizedSrc), [normalizedSrc]);
+
+  const isUsingImageKit = isValidImageKitEndpoint(urlEndpoint);
 
   return (
     <Image
       {...props}
-      width={width}
-      quality={quality ? Number(quality) : undefined}
-      src={isUsingImageKit ? finalSrc : src}
+      src={src}
+      quality={quality}
       sizes={sizes}
-      unoptimized={isUsingImageKit}
-      style={
-        blur && showPlaceholder && isUsingImageKit
+      loader={isUsingImageKit ? imageLoader : undefined}
+      style={{
+        ...style,
+
+        ...(blur && isLoading && isUsingImageKit
           ? {
               backgroundImage: `url(${blurSrc})`,
               backgroundSize: "cover",
+              backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
             }
-          : undefined
-      }
-      onLoad={() => setShowPlaceholder(false)}
+          : {}),
+      }}
+      onLoad={() => {
+        setIsLoading(false);
+
+        props.onLoad?.({} as React.SyntheticEvent<HTMLImageElement, Event>);
+      }}
     />
   );
 }

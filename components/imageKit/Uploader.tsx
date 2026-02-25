@@ -14,6 +14,8 @@ import {
 } from "@imagekit/next";
 
 import { cn } from "@/lib/utils";
+import { compressImage } from "@/lib/Imagecompression";
+import ImageOptimization from "./ImageOptimization";
 
 interface FileWithState {
   id: string;
@@ -192,30 +194,49 @@ export function Uploader({
       );
     }
   };
-
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[]) => {
       if (files.length + acceptedFiles.length > maxFiles) {
         toast.error(`Max ${maxFiles} images allowed`);
         return;
       }
 
-      const newFiles: FileWithState[] = acceptedFiles.map((file) => ({
-        id: uuidv4(),
-        file,
-        url: URL.createObjectURL(file),
-        uploading: true,
-        progress: 0,
-        isDeleting: false,
-        error: false,
-        isRemote: false,
-      }));
+      try {
+        const compressedFiles = await Promise.all(
+          acceptedFiles.map(async (file) => {
+            try {
+              return await compressImage(file, {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 1600,
+              });
+            } catch (error) {
+              console.error("Compression failed:", error);
+              return file;
+            }
+          }),
+        );
 
-      setFiles((prev) => [...prev, ...newFiles]);
+        const newFiles: FileWithState[] = compressedFiles.map((file) => ({
+          id: uuidv4(),
+          file,
+          url: URL.createObjectURL(file),
+          uploading: true,
+          progress: 0,
+          isDeleting: false,
+          error: false,
+          isRemote: false,
+        }));
 
-      newFiles.forEach((f) => {
-        if (f.file) uploadFile(f.id, f.file);
-      });
+        setFiles((prev) => [...prev, ...newFiles]);
+
+        newFiles.forEach((f) => {
+          if (f.file) {
+            uploadFile(f.id, f.file);
+          }
+        });
+      } catch (error) {
+        toast.error("Failed to process images");
+      }
     },
     [files, maxFiles],
   );
@@ -225,7 +246,6 @@ export function Uploader({
     accept: { "image/*": [] },
     maxFiles: maxFiles - files.length,
     disabled: files.length >= maxFiles,
-    
   });
 
   return (
@@ -271,10 +291,12 @@ export function Uploader({
                 key={file.id}
                 className="group relative aspect-square border-2 border-black bg-white transition-all hover:bg-gray-50"
               >
-                <img
+                <ImageOptimization
                   src={file.url}
                   alt="Upload preview"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
+                  fill
+                  sizes=""
                 />
 
                 {file.uploading && (
@@ -320,7 +342,6 @@ export function Uploader({
           </div>
         )}
       </div>
-
     </div>
   );
 }

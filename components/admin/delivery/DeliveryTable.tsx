@@ -42,7 +42,7 @@ export function DeliveryTable({ initialData }: { initialData: Delivery[] }) {
 
       <div className="overflow-x-auto border border-black">
         <table className="w-full text-left">
-          <thead className="border-b border-black bg-black/[0.02]">
+          <thead className="border-b border-black bg-black/0.02">
             <tr>
               <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
                 City
@@ -69,7 +69,7 @@ export function DeliveryTable({ initialData }: { initialData: Delivery[] }) {
               </tr>
             ) : (
               initialData.map((setting) => (
-                <tr key={setting.id} className="group hover:bg-black/[0.01]">
+                <tr key={setting.id} className="group hover:bg-black/0.01">
                   <td className="px-6 py-4">
                     <span className="text-sm font-black uppercase tracking-tight text-black">
                       {setting.city}
