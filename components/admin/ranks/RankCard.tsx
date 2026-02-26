@@ -34,7 +34,7 @@ export default function RankCard({ product, index, onRemove }: RankCardProps) {
       ref={setNodeRef}
       style={style}
       className={`group flex items-center gap-4 p-4 bg-white border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
-        isDragging ? "shadow-none translate-x-[2px] translate-y-[2px]" : ""
+        isDragging ? "shadow-none translate-x-0.5 translate-y-0.5" : ""
       }`}
     >
       <div

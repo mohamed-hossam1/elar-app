@@ -1,50 +1,50 @@
 "use server"
 import { CACHE_TAGS } from "@/constants/cacheTages";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 
-function revalidateTags(tags: string[]) {
+function updateTags(tags: string[]) {
   for (const tag of tags) {
-    revalidateTag(tag, 'max');
+    updateTag(tag);
   }
 }
 
 export async function revalidateCatalogPaths(productId?: number | string) {
-  revalidateTags([CACHE_TAGS.products, CACHE_TAGS.categories]);
+  updateTags([CACHE_TAGS.products, CACHE_TAGS.categories]);
 
   if (productId) {
-    revalidateTag(CACHE_TAGS.product(productId), 'max');
+    updateTag(CACHE_TAGS.product(productId));
   }
 }
 
 export async function revalidateCategoryPaths(categoryId?: number | string) {
-  revalidateTags([CACHE_TAGS.categories]);
+  updateTags([CACHE_TAGS.categories]);
 
   if (categoryId) {
-    revalidateTag(CACHE_TAGS.category(categoryId), 'max');
+    updateTag(CACHE_TAGS.category(categoryId));
   }
 }
 
 export async function revalidatePromoPaths(promoId?: number | string) {
-  revalidateTags([CACHE_TAGS.promoCodes]);
+  updateTags([CACHE_TAGS.promoCodes]);
 }
 
 export async function revalidateDeliveryPaths(deliveryId?: number | string) {
-  revalidateTags([CACHE_TAGS.delivery]);
+  updateTags([CACHE_TAGS.delivery]);
 }
 
 export async function revalidateOrderPaths(orderId?: number | string) {
-  revalidateTags([CACHE_TAGS.orders]);
+  updateTags([CACHE_TAGS.orders]);
 
   if (orderId) {
-    revalidateTag(CACHE_TAGS.order(orderId), 'max');
+    updateTag(CACHE_TAGS.order(orderId));
   }
 }
 
 export async function revalidateUserPaths(userId?: string) {
-  revalidateTags([CACHE_TAGS.users]);
+  updateTags([CACHE_TAGS.users]);
 
   if (userId) {
-    revalidateTag(CACHE_TAGS.user(userId), 'max');
+    updateTag(CACHE_TAGS.user(userId));
   }
 }

@@ -39,7 +39,6 @@ export default function CategoryForm({ category }: CategoryFormProps) {
     }
   }, [title, category, slugManuallyEdited]);
 
-  
   useEffect(() => {
     if (!category) {
       setTitle("");
@@ -83,11 +82,13 @@ export default function CategoryForm({ category }: CategoryFormProps) {
           setImage("");
           setSlugManuallyEdited(false);
         }
-        router.push("/admin/categories");
-        router.refresh();
+
+        router.replace("/admin/categories");
       } else {
-        
-        if (res.message.toLowerCase().includes("unique") || res.message.toLowerCase().includes("slug")) {
+        if (
+          res.message.toLowerCase().includes("unique") ||
+          res.message.toLowerCase().includes("slug")
+        ) {
           setFieldErrors({ slug: "This slug is already in use" });
         } else {
           setError(res.message);
@@ -115,9 +116,9 @@ export default function CategoryForm({ category }: CategoryFormProps) {
           />
         </AdminField>
 
-        <AdminField 
-          label="URL Slug" 
-          hint="Must be unique" 
+        <AdminField
+          label="URL Slug"
+          hint="Must be unique"
           error={fieldErrors.slug}
         >
           <input
@@ -155,7 +156,11 @@ export default function CategoryForm({ category }: CategoryFormProps) {
           disabled={isPending}
           className="inline-flex border border-black bg-black px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black disabled:opacity-50"
         >
-          {isPending ? "Saving..." : category ? "Update Category" : "Create Category"}
+          {isPending
+            ? "Saving..."
+            : category
+              ? "Update Category"
+              : "Create Category"}
         </button>
       </div>
     </form>

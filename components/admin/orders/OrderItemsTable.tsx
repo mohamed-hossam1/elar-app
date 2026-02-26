@@ -7,7 +7,7 @@ import Image from "@/components/imageKit/ImageOptimization";
 export function OrderItemsTable({ items }: { items: OrderItem[] | undefined }) {
   if (!items || items.length === 0) {
     return (
-      <AdminCard className="h-full flex items-center justify-center min-h-[200px]">
+      <AdminCard className="h-full flex items-center justify-center min-h-50">
         <p className="text-sm font-medium text-black/60">No items found.</p>
       </AdminCard>
     );

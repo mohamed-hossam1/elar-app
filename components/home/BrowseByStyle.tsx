@@ -29,7 +29,7 @@ export default function BrowseByStyle({
                     src={category.image}
                     alt={category.title}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="object-contain transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 112px, (max-width: 1200px) 160px, 192px"
                     priority={index < 4}
                   />

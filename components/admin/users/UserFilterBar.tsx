@@ -91,7 +91,7 @@ export default function UserFilterBar() {
         <button 
           onClick={handleClear}
           disabled={isPending}
-          className="w-full h-[46px] px-3 border border-black bg-white hover:bg-black hover:text-white transition text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
+          className="w-full h-11.5 px-3 border border-black bg-white hover:bg-black hover:text-white transition text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
         >
           Clear Filters
         </button>

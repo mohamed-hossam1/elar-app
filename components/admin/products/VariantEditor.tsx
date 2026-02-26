@@ -259,7 +259,7 @@ export default function VariantEditor({
               type="button"
               onClick={generateVariants}
               disabled={quickColors.length === 0 || quickSizes.length === 0}
-              className="w-full h-[46px] border border-black bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] transition hover:bg-white hover:text-black disabled:opacity-20"
+              className="w-full h-11.5 border border-black bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] transition hover:bg-white hover:text-black disabled:opacity-20"
             >
               Generate
             </button>

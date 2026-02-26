@@ -45,7 +45,7 @@ export function OrderTable({
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
-                        <span className="font-medium max-w-[150px] truncate" title={order.user_name}>
+                        <span className="font-medium max-w-37.5 truncate" title={order.user_name}>
                           {order.user_name}
                         </span>
                         <span className="text-[10px] text-black/40 font-bold uppercase tracking-wider">

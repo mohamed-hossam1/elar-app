@@ -26,8 +26,7 @@ export default function DeleteUserAccessButton({
         const result = await deleteUserAccess(userId, { confirmRemoval: true });
         setMessage(result.success ? "Access removed." : result.message);
         if (result.success) {
-          router.push(ROUTES.ADMIN_USERS);
-          router.refresh();
+          router.replace(ROUTES.ADMIN_USERS);
         }
       })();
     });

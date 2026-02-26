@@ -146,8 +146,7 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
           ]);
           setGalleryUrls([]);
         }
-        router.push("/admin/products");
-        router.refresh();
+        router.replace("/admin/products");
       } else {
         setError(res.message);
       }

@@ -88,8 +88,7 @@ export function PromoCodeForm({ initialData }: PromoCodeFormProps) {
           setExpiresAt("");
           setIsActive(true);
         }
-        router.push("/admin/promo-codes");
-        router.refresh();
+        router.replace("/admin/promo-codes");
       } else {
         setError(res.message);
       }

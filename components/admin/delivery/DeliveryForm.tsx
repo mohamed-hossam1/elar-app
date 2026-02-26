@@ -63,8 +63,8 @@ export function DeliveryForm({ initialData }: DeliveryFormProps) {
           setCity("");
           setDeliveryFee("");
         }
-        router.push("/admin/delivery");
-        router.refresh();
+        router.replace("/admin/delivery");
+
       } else {
         setError(res.message);
       }

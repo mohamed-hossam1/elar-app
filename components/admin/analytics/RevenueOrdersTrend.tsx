@@ -92,7 +92,7 @@ export function RevenueOrdersTrend({ trends }: RevenueOrdersTrendProps) {
       </div>
 
       <div className="relative border border-black overflow-hidden bg-white">
-        <div className="overflow-x-auto max-h-[300px]">
+        <div className="overflow-x-auto max-h-75">
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-black text-white text-[10px] font-black uppercase tracking-widest">
               <tr>

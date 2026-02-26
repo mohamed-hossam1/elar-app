@@ -46,7 +46,7 @@ export function TopProductsTable({ products }: TopProductsTableProps) {
                 className="hover:bg-black/3 transition-colors group"
               >
                 <td className="text-left py-3 px-4">
-                  <p className="font-bold truncate max-w-[200px]">
+                  <p className="font-bold truncate max-w-50">
                     {product.title}
                   </p>
                   <p className="text-[10px] text-black/40 font-medium">
