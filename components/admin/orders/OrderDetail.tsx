@@ -22,7 +22,8 @@ export function OrderDetail({ order }: { order: Order }) {
             )}
           </div>
           <p className="text-sm font-medium text-black/60">
-            Placed on {Data(order.created_at || new Date().toISOString())["12h"]}
+            Placed on{" "}
+            {Data(order.created_at || new Date().toISOString())["12h"]}
           </p>
         </div>
         <div className="sm:w-64">
@@ -34,43 +35,42 @@ export function OrderDetail({ order }: { order: Order }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <OrderItemsTable items={order.items} />
+          <AdminCard className=" ml-auto">
+            <h3 className="font-integral text-sm font-black uppercase tracking-[0.08em] text-black border-b border-black/10 pb-3 mb-4">
+              Order Totals
+            </h3>
+            <div className="space-y-3 text-sm font-medium">
+              <div className="flex justify-between text-black/70">
+                <span>Subtotal</span>
+                <span>EGP {Number(order.subtotal).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-black/70">
+                <div className="flex flex-col">
+                  <span>Discount</span>
+                  <span className="text-[10px] font-black tracking-wider uppercase text-black/40 mt-1">
+                    Note: Original promo code string is not stored.
+                  </span>
+                </div>
+                <span>-EGP {Number(order.discount_amount).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-black/70">
+                <span>Delivery Fee</span>
+                <span>EGP {Number(order.delivery_fee).toFixed(2)}</span>
+              </div>
+              <div className="pt-3 border-t border-black/10 flex justify-between text-black text-base font-bold">
+                <span>Grand Total</span>
+                <span>EGP {Number(order.total_price).toFixed(2)}</span>
+              </div>
+            </div>
+          </AdminCard>
         </div>
         <div className="space-y-6">
           <OrderAddressCard order={order} />
           <OrderPaymentCard order={order} />
         </div>
       </div>
-
-      <AdminCard className="lg:w-1/2 ml-auto">
-        <h3 className="font-integral text-sm font-black uppercase tracking-[0.08em] text-black border-b border-black/10 pb-3 mb-4">
-          Order Totals
-        </h3>
-        <div className="space-y-3 text-sm font-medium">
-          <div className="flex justify-between text-black/70">
-            <span>Subtotal</span>
-            <span>EGP {Number(order.subtotal).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-black/70">
-            <div className="flex flex-col">
-              <span>Discount</span>
-              <span className="text-[10px] font-black tracking-wider uppercase text-black/40 mt-1">
-                Note: Original promo code string is not stored.
-              </span>
-            </div>
-            <span>-EGP {Number(order.discount_amount).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-black/70">
-            <span>Delivery Fee</span>
-            <span>EGP {Number(order.delivery_fee).toFixed(2)}</span>
-          </div>
-          <div className="pt-3 border-t border-black/10 flex justify-between text-black text-base font-bold">
-            <span>Grand Total</span>
-            <span>EGP {Number(order.total_price).toFixed(2)}</span>
-          </div>
-        </div>
-      </AdminCard>
     </div>
   );
 }
