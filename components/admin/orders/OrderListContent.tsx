@@ -13,18 +13,21 @@ export default function OrderListContent() {
   const searchParams = useSearchParams();
 
   const filters: AdminOrderFilters = useMemo(
-    () => ({
-      search: searchParams.get("search") || undefined,
-      status: searchParams.get("status") || undefined,
-      paymentMethod: searchParams.get("paymentMethod") || undefined,
-      customerType:
-        searchParams.get("customerType") === "guest" ||
-        searchParams.get("customerType") === "user"
-          ? searchParams.get("customerType")
-          : undefined,
-      dateFrom: searchParams.get("dateFrom") || undefined,
-      dateTo: searchParams.get("dateTo") || undefined,
-    }),
+    () => {
+      const customerTypeParam = searchParams.get("customerType");
+
+      return {
+        search: searchParams.get("search") || undefined,
+        status: searchParams.get("status") || undefined,
+        paymentMethod: searchParams.get("paymentMethod") || undefined,
+        customerType:
+          customerTypeParam === "guest" || customerTypeParam === "user"
+            ? customerTypeParam
+            : undefined,
+        dateFrom: searchParams.get("dateFrom") || undefined,
+        dateTo: searchParams.get("dateTo") || undefined,
+      };
+    },
     [searchParams],
   );
 

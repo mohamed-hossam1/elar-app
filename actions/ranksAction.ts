@@ -5,7 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { verifyAdmin } from "./userAction";
 import { RankedProduct, RankMode, RankUpdateItem } from "@/types/Rank";
 
-const MODE_COLUMN_MAP: Record<RankMode, string> = {
+type RankColumn = "category_rank" | "top_selling_rank" | "new_arrival_rank";
+
+const MODE_COLUMN_MAP: Record<RankMode, RankColumn> = {
   category: "category_rank",
   top_selling: "top_selling_rank",
   new_arrival: "new_arrival_rank",
@@ -34,7 +36,9 @@ export async function getRankedProducts(
 
   let query = supabase
     .from("products")
-    .select(`id, title, image_cover, ${columnName}, created_at`)
+    .select(
+      "id, title, image_cover, category_rank, top_selling_rank, new_arrival_rank, created_at",
+    )
     .eq("is_deleted", false);
 
   if (mode === "category") {
@@ -57,11 +61,11 @@ export async function getRankedProducts(
     return { success: false, message: "Failed to fetch ranked products" };
   }
 
-  const mappedData: RankedProduct[] = (data as RankedProductRow[]).map((item) => ({
+  const mappedData: RankedProduct[] = (data ?? []).map((item) => ({
     id: item.id,
     title: item.title,
     image_cover: item.image_cover,
-    rank: item[columnName],
+    rank: item[columnName] ?? null,
   }));
 
   return { success: true, data: mappedData };

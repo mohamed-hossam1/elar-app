@@ -1,11 +1,13 @@
 import ProductListContent from "@/components/products/ProductListContent";
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
 import {
   getOgMetadata,
   getTwitterCardMetadata,
 } from "@/lib/metadata/socialCards";
 import { getBreadcrumbSchema } from "@/lib/metadata/structuredData";
+import ShowProductsListSkeleton from "@/components/skeleton/ShowProductsListSkeleton";
 
 export const metadata: Metadata = {
   title: "Shop All Products",
@@ -37,7 +39,9 @@ export default function ProductsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <ProductListContent />
+      <Suspense fallback={<ShowProductsListSkeleton />}>
+        <ProductListContent />
+      </Suspense>
     </>
   );
 }
