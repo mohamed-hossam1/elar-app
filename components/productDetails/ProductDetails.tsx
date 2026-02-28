@@ -1,15 +1,15 @@
-import { getProductById } from "@/actions/productsAction";
-
 import ImageSlider from "./ImageSlider";
 import QuantityProduct from "./QuantityProduct";
 import RelatedProducts from "./RelatedProducts";
 import ProductFAQ from "./ProductFAQ";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import type { ProductDetails as ProductDetailsType } from "@/types/Product";
 
-export async function ProductDetailsMain({ id }: { id: string }) {
-  const response = await getProductById(Number(id));
-  const product = response.success ? response.data : null;
-
+export function ProductDetailsMain({
+  product,
+}: {
+  product: ProductDetailsType | null;
+}) {
   if (!product || product.is_deleted) {
     return (
       <div className="max-w-[1450px] px-5 m-auto mt-12 text-center py-20 font-satoshi">
@@ -37,7 +37,7 @@ export async function ProductDetailsMain({ id }: { id: string }) {
                 <ImageSlider
                   images={[
                     ...(product.image_cover ? [product.image_cover] : []),
-                    ...(product.images?.map((img: any) => img.url) || []),
+                    ...(product.images?.map((img) => img.url) || []),
                   ]}
                 />
               </div>
@@ -68,13 +68,14 @@ export async function ProductDetailsMain({ id }: { id: string }) {
           <ProductFAQ />
         </div>
       </div>
-    );
+  );
 }
 
-export async function ProductDetailsRelated({ id }: { id: string }) {
-  const response = await getProductById(Number(id));
-  const product = response.success ? response.data : null;
-
+export function ProductDetailsRelated({
+  product,
+}: {
+  product: ProductDetailsType | null;
+}) {
   if (!product || product.is_deleted || !product.category_id) {
     return null;
   }
@@ -94,11 +95,15 @@ export async function ProductDetailsRelated({ id }: { id: string }) {
   );
 }
 
-export default async function ProductDetails({ id }: { id: string }) {
+export default function ProductDetails({
+  product,
+}: {
+  product: ProductDetailsType | null;
+}) {
   return (
     <>
-      <ProductDetailsMain id={id} />
-      <ProductDetailsRelated id={id} />
+      <ProductDetailsMain product={product} />
+      <ProductDetailsRelated product={product} />
     </>
   );
 }

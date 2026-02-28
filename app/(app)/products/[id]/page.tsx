@@ -2,10 +2,31 @@ import ProductDetails from "@/components/productDetails/ProductDetails";
 import ProductDetailsSkeleton from "@/components/skeleton/ProductDetailsSkeleton";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { getProductById } from "@/actions/productsAction";
+import { CACHE_TAGS } from "@/constants/cacheTages";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
 import { getOgMetadata, getTwitterCardMetadata } from "@/lib/metadata/socialCards";
 import { getProductSchema, getBreadcrumbSchema } from "@/lib/metadata/structuredData";
+import type { ProductDetails as ProductDetailsType } from "@/types/Product";
+
+async function getCachedProductForPage(
+  id: string,
+): Promise<ProductDetailsType | null> {
+  "use cache";
+  const productId = Number(id);
+
+  cacheLife("hours");
+
+  if (!Number.isInteger(productId)) {
+    return null;
+  }
+
+  cacheTag(CACHE_TAGS.products, CACHE_TAGS.product(productId));
+
+  const response = await getProductById(productId);
+  return response.success ? response.data : null;
+}
 
 export async function generateMetadata({
   params,
@@ -13,8 +34,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const response = await getProductById(Number(id));
-  const product = response.success ? response.data : null;
+  const product = await getCachedProductForPage(id);
 
   if (!product) {
     return {
@@ -58,8 +78,7 @@ async function ProductPageContent({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const response = await getProductById(Number(id));
-  const product = response.success ? response.data : null;
+  const product = await getCachedProductForPage(id);
 
   const breadcrumbItems = [
     { name: "Home", item: "/" },
@@ -97,7 +116,7 @@ async function ProductPageContent({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
         />
       )}
-      <ProductDetails id={id} />
+      <ProductDetails product={product} />
     </>
   );
 }
