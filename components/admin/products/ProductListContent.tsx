@@ -49,12 +49,11 @@ export default function ProductListContent() {
 
     staleTime: 1000 * 60 * 60,
   });
-  if (isLoading) return <AdminProductListSkeleton />;
   const products = data?.productsRes?.success ? data.productsRes.data : [];
 
   const categories = data?.categoriesRes?.success
     ? data.categoriesRes.data
     : [];
 
-  return <ProductTable products={products} categories={categories} />;
+  return <ProductTable products={products} categories={categories} isLoading={isLoading} />;
 }

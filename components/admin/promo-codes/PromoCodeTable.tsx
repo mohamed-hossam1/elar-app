@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Search, Edit, Trash2 } from "lucide-react";
 import { PromoCode } from "@/types/PromoCode";
@@ -16,49 +17,46 @@ import {
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { getPromoStatusTone } from "@/lib/admin";
 import { cn } from "@/lib/utils";
+import AdminPromoCodeListSkeleton from "@/components/skeleton/AdminPromoCodeListSkeleton";
 
-export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
+export function PromoCodeTable({
+  promoCodes,
+  isLoading,
+}: {
+  promoCodes: PromoCode[];
+  isLoading: boolean;
+}) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [localSearch, setLocalSearch] = useState(
-    searchParams.get("search") || "",
-  );
-
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || "all";
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (localSearch !== search) {
-        updateFilters({ search: localSearch });
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [localSearch, search]);
-
-  useEffect(() => {
-    setLocalSearch(search);
-  }, [search]);
-
-  const updateFilters = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    Object.entries(updates).forEach(([key, value]) => {
-      if (
-        value === null ||
-        value === "" ||
-        (key === "status" && value === "all")
-      ) {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
-    });
-    router.push(`/admin/promo-codes?${params.toString()}`);
-  };
+  const updateFilters = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.entries(updates).forEach(([key, value]) => {
+        if (
+          value === null ||
+          value === "" ||
+          (key === "status" && value === "all")
+        ) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      });
+      const query = params.toString();
+      router.replace(
+        query ? `/admin/promo-codes?${query}` : "/admin/promo-codes",
+      );
+    },
+    [router, searchParams],
+  );
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -67,7 +65,9 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
       const res = await deletePromoCode(deleteId);
       if (res.success) {
         setDeleteId(null);
-        router.refresh();
+        await queryClient.invalidateQueries({
+          queryKey: ["admin-promo-codes-page"],
+        });
       } else {
         setError(res.message);
       }
@@ -101,16 +101,11 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
           <label className="text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
             Search Promo Codes
           </label>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-black/35" />
-            <input
-              type="text"
-              placeholder="Search by code..."
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-              className={cn(adminInputClassName, "pl-12")}
-            />
-          </div>
+          <PromoCodeSearchInput
+            key={search}
+            initialValue={search}
+            onSearchChange={(value) => updateFilters({ search: value })}
+          />
         </div>
 
         <div className="w-full lg:w-48 space-y-2">
@@ -131,7 +126,10 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto border border-black">
+      {isLoading ? (
+        <AdminPromoCodeListSkeleton />
+      ) : (
+        <div className="overflow-x-auto border border-black">
         <table className="w-full text-left">
           <thead className="border-b border-black bg-black/2">
             <tr>
@@ -156,7 +154,7 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/10">
-            {initialData.length === 0 ? (
+            {promoCodes.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-0 py-0 border-none">
                   <AdminEmptyState
@@ -176,7 +174,7 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
                 </td>
               </tr>
             ) : (
-              initialData.map((promo) => {
+              promoCodes.map((promo) => {
                 const currentStatus = getPromoStatus(promo);
                 return (
                   <tr key={promo.id} className="group hover:bg-black/1">
@@ -252,7 +250,8 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
             )}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
 
       <ConfirmDialog
         open={!!deleteId}
@@ -262,6 +261,39 @@ export function PromoCodeTable({ initialData }: { initialData: PromoCode[] }) {
         isPending={isPending}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}
+      />
+    </div>
+  );
+}
+
+function PromoCodeSearchInput({
+  initialValue,
+  onSearchChange,
+}: {
+  initialValue: string;
+  onSearchChange: (value: string) => void;
+}) {
+  const [localSearch, setLocalSearch] = useState(initialValue);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localSearch !== initialValue) {
+        onSearchChange(localSearch);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [initialValue, localSearch, onSearchChange]);
+
+  return (
+    <div className="relative">
+      <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-black/35" />
+      <input
+        type="text"
+        placeholder="Search by code..."
+        value={localSearch}
+        onChange={(event) => setLocalSearch(event.target.value)}
+        className={cn(adminInputClassName, "pl-12")}
       />
     </div>
   );

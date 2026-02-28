@@ -1,9 +1,29 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { getDeliverySettings } from "@/actions/deliveryAction";
+import { AdminNotice } from "@/components/admin/AdminUI";
 import { DeliveryTable } from "@/components/admin/delivery/DeliveryTable";
 
-export default async function DeliveryListContent() {
-  const res = await getDeliverySettings();
-  const settings = res.success ? res.data : [];
+export default function DeliveryListContent() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-delivery-page"],
+    queryFn: () => getDeliverySettings(),
+    staleTime: 1000 * 60 * 5,
+  });
 
-  return <DeliveryTable initialData={settings} />;
+  if (data && !data.success) {
+    return (
+      <AdminNotice tone="danger" title="Error Loading Delivery Settings">
+        {data.message}
+      </AdminNotice>
+    );
+  }
+
+  return (
+    <DeliveryTable
+      deliverySettings={data?.success ? data.data : []}
+      isLoading={isLoading}
+    />
+  );
 }

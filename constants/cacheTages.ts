@@ -8,6 +8,7 @@ export const CACHE_TAGS = {
 
   product:   (id: number | string) => `product:${id}`,
   category:  (id: number | string) => `category:${id}`,
+  deliverySetting: (id: number | string) => `delivery:${id}`,
   order:     (id: number | string) => `order:${id}`,
   user:      (id: string)          => `user:${id}`,
 };

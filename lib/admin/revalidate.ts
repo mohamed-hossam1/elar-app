@@ -25,12 +25,16 @@ export async function revalidateCategoryPaths(categoryId?: number | string) {
   }
 }
 
-export async function revalidatePromoPaths(promoId?: number | string) {
+export async function revalidatePromoPaths() {
   updateTags([CACHE_TAGS.promoCodes]);
 }
 
 export async function revalidateDeliveryPaths(deliveryId?: number | string) {
   updateTags([CACHE_TAGS.delivery]);
+
+  if (deliveryId) {
+    updateTag(CACHE_TAGS.deliverySetting(deliveryId));
+  }
 }
 
 export async function revalidateOrderPaths(orderId?: number | string) {

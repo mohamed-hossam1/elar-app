@@ -61,7 +61,17 @@ export async function getDeliverySettings(): Promise<
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedDeliverySettings();
+}
+
+async function getCachedDeliverySettings(): Promise<
+  { success: true; data: Delivery[] } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.delivery);
+  cacheLife("hours");
+
+  const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("delivery")
     .select("*")
@@ -82,7 +92,19 @@ export async function getDeliverySettingById(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedDeliverySettingById(id);
+}
+
+async function getCachedDeliverySettingById(
+  id: number,
+): Promise<
+  { success: true; data: Delivery } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.delivery, CACHE_TAGS.deliverySetting(id));
+  cacheLife("hours");
+
+  const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("delivery")
     .select("*")
@@ -141,7 +163,7 @@ export async function createDeliverySetting(
     return { success: false, message: error.message };
   }
 
-  revalidateDeliveryPaths();
+  revalidateDeliveryPaths(data.id);
   return { success: true, data: data as Delivery };
 }
 
@@ -192,7 +214,7 @@ export async function updateDeliverySetting(
     return { success: false, message: error.message };
   }
 
-  revalidateDeliveryPaths();
+  revalidateDeliveryPaths(id);
   return { success: true, data: data as Delivery };
 }
 
@@ -211,6 +233,6 @@ export async function deleteDeliverySetting(
     return { success: false, message: error.message };
   }
 
-  revalidateDeliveryPaths();
+  revalidateDeliveryPaths(id);
   return { success: true, message: "Delivery setting deleted successfully." };
 }

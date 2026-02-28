@@ -1,25 +1,29 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { Order } from "@/types/Order";
-import { AdminOrderFilters } from "@/types/Admin";
 import { AdminEmptyState, AdminStatusBadge } from "@/components/admin/AdminUI";
 import { formatAdminLabel, getStatusTone } from "@/lib/admin";
 import { Data } from "@/lib/data";
 import Link from "next/link";
 import { OrderFilterBar } from "./OrderFilterBar";
 import ROUTES from "@/constants/routes";
+import AdminOrderListSkeleton from "@/components/skeleton/AdminOrderListSkeleton";
 
 export function OrderTable({ 
   orders, 
+  isLoading,
 }: { 
   orders: Order[];
-  filters?: AdminOrderFilters;
+  isLoading: boolean;
 }) {
   return (
     <div className="space-y-4">
       <OrderFilterBar />
-      
-      {orders.length === 0 ? (
+
+      {isLoading ? (
+        <AdminOrderListSkeleton />
+      ) : orders.length === 0 ? (
         <AdminEmptyState
           title="No Orders Found"
           description="Try adjusting your filters or search query to find what you're looking for."
@@ -61,10 +65,18 @@ export function OrderTable({
                     {Data(order.created_at || new Date().toISOString())["12h"]}
                   </td>
                   <td className="p-4">
-                    <AdminStatusBadge 
-                      label={formatAdminLabel(order.status)} 
-                      tone={getStatusTone(order.status) as any} 
-                    />
+                    {(() => {
+                      const tone = getStatusTone(
+                        order.status,
+                      ) as ComponentProps<typeof AdminStatusBadge>["tone"];
+
+                      return (
+                        <AdminStatusBadge 
+                          label={formatAdminLabel(order.status)} 
+                          tone={tone} 
+                        />
+                      );
+                    })()}
                   </td>
                   <td className="p-4 font-medium">
                     EGP {Number(order.total_price).toFixed(2)}

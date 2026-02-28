@@ -1,7 +1,4 @@
-import ProductListing from "@/components/products/ProductListing";
-import { normalizeListingQuery } from "@/lib/products/listing";
-import { Suspense } from "react";
-import ShowProductsListSkeleton from "@/components/skeleton/ShowProductsListSkeleton";
+import ProductListContent from "@/components/products/ProductListContent";
 import { Metadata } from "next";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
 import {
@@ -28,13 +25,7 @@ export const metadata: Metadata = {
   ),
 };
 
-export default function ProductsPage({
-  searchParams,
-}: {
-  searchParams:
-    | Promise<{ [key: string]: string | string[] | undefined }>
-    | { [key: string]: string | string[] | undefined };
-}) {
+export default function ProductsPage() {
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", item: "/" },
     { name: "Products", item: "/products" },
@@ -46,21 +37,7 @@ export default function ProductsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Suspense fallback={<ShowProductsListSkeleton />}>
-        <ProductsWrapper searchParams={searchParams} />
-      </Suspense>
+      <ProductListContent />
     </>
   );
-}
-
-async function ProductsWrapper({
-  searchParams,
-}: {
-  searchParams:
-    | Promise<{ [key: string]: string | string[] | undefined }>
-    | { [key: string]: string | string[] | undefined };
-}) {
-  const params = await searchParams;
-  const normalizedQuery = normalizeListingQuery(params);
-  return <ProductListing query={normalizedQuery} />;
 }

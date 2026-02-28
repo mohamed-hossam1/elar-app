@@ -1,16 +1,9 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminUI";
-import { AdminPromoFilters, PromoStatusFilter } from "@/types/Admin";
 import PromoCodeListContent from "@/components/admin/promo-codes/PromoCodeListContent";
-import AdminPromoCodeListSkeleton from "@/components/skeleton/AdminPromoCodeListSkeleton";
 
-export default function AdminPromoCodesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default function AdminPromoCodesPage() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -26,25 +19,7 @@ export default function AdminPromoCodesPage({
           </Link>
         }
       />
-
-      <Suspense fallback={<AdminPromoCodeListSkeleton />}>
-        <PromoCodeListWrapper searchParams={searchParams} />
-      </Suspense>
+      <PromoCodeListContent />
     </div>
   );
-}
-
-async function PromoCodeListWrapper({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-
-  const filters: AdminPromoFilters = {
-    search: typeof params.search === "string" ? params.search : undefined,
-    status: (typeof params.status === "string" ? params.status : "all") as PromoStatusFilter,
-  };
-
-  return <PromoCodeListContent filters={filters} />;
 }

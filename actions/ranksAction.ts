@@ -11,6 +11,15 @@ const MODE_COLUMN_MAP: Record<RankMode, string> = {
   new_arrival: "new_arrival_rank",
 };
 
+type RankedProductRow = {
+  id: string;
+  title: string;
+  image_cover: string;
+  category_rank?: number | null;
+  top_selling_rank?: number | null;
+  new_arrival_rank?: number | null;
+};
+
 export async function getRankedProducts(
   mode: RankMode,
   categoryId?: number,
@@ -25,13 +34,21 @@ export async function getRankedProducts(
 
   let query = supabase
     .from("products")
-    .select("id, title, image_cover, " + columnName)
-    .eq("is_deleted", false)
-    .not(columnName, "is", null)
-    .order(columnName, { ascending: true });
+    .select(`id, title, image_cover, ${columnName}, created_at`)
+    .eq("is_deleted", false);
 
-  if (mode === "category" && categoryId) {
-    query = query.eq("category_id", categoryId);
+  if (mode === "category") {
+    if (categoryId) {
+      query = query.eq("category_id", categoryId);
+    }
+
+    query = query
+      .order(columnName, { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: false });
+  } else {
+    query = query
+      .not(columnName, "is", null)
+      .order(columnName, { ascending: true });
   }
 
   const { data, error } = await query;
@@ -40,7 +57,7 @@ export async function getRankedProducts(
     return { success: false, message: "Failed to fetch ranked products" };
   }
 
-  const mappedData: RankedProduct[] = data.map((item: any) => ({
+  const mappedData: RankedProduct[] = (data as RankedProductRow[]).map((item) => ({
     id: item.id,
     title: item.title,
     image_cover: item.image_cover,

@@ -1,9 +1,7 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminUI";
 import DeliveryListContent from "@/components/admin/delivery/DeliveryListContent";
-import AdminDeliveryListSkeleton from "@/components/skeleton/AdminDeliveryListSkeleton";
 
 export default function AdminDeliveryPage() {
   return (
@@ -22,13 +20,7 @@ export default function AdminDeliveryPage() {
         }
       />
 
-      <Suspense fallback={<AdminDeliveryListSkeleton />}>
-        <DeliveryListWrapper />
-      </Suspense>
+      <DeliveryListContent />
     </div>
   );
-}
-
-async function DeliveryListWrapper() {
-  return <DeliveryListContent />;
 }

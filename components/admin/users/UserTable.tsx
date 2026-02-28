@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { User } from "@/types/User";
 import { AdminEmptyState, AdminStatusBadge } from "@/components/admin/AdminUI";
 import { formatAdminLabel, getRoleTone } from "@/lib/admin";
@@ -7,17 +8,21 @@ import { Data } from "@/lib/data";
 import Link from "next/link";
 import ROUTES from "@/constants/routes";
 import UserFilterBar from "./UserFilterBar";
+import AdminUserListSkeleton from "@/components/skeleton/AdminUserListSkeleton";
 
 interface UserTableProps {
   users: User[];
+  isLoading: boolean;
 }
 
-export default function UserTable({ users }: UserTableProps) {
+export default function UserTable({ users, isLoading }: UserTableProps) {
   return (
     <div className="space-y-4">
       <UserFilterBar />
-      
-      {users.length === 0 ? (
+
+      {isLoading ? (
+        <AdminUserListSkeleton />
+      ) : users.length === 0 ? (
         <AdminEmptyState
           title="No Users Found"
           description="Try adjusting your filters or search query to find the user accounts you're looking for."
@@ -42,9 +47,13 @@ export default function UserTable({ users }: UserTableProps) {
                   <td className="p-4 text-black/70">{user.email}</td>
                   <td className="p-4 text-black/70">{user.phone || "N/A"}</td>
                   <td className="p-4">
-                    <AdminStatusBadge 
-                      label={formatAdminLabel(user.role)} 
-                      tone={getRoleTone(user.role) as any} 
+                    <AdminStatusBadge
+                      label={formatAdminLabel(user.role)}
+                      tone={
+                        getRoleTone(
+                          user.role,
+                        ) as ComponentProps<typeof AdminStatusBadge>["tone"]
+                      }
                     />
                   </td>
                   <td className="p-4 text-black/70">

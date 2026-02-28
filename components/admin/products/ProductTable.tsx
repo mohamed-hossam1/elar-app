@@ -18,13 +18,18 @@ import {
 } from "@/components/admin/AdminUI";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { cn } from "@/lib/utils";
+import AdminProductListSkeleton from "@/components/skeleton/AdminProductListSkeleton";
+
+const SEARCH_DEBOUNCE_DELAY = 800;
 
 export default function ProductTable({
   products,
   categories,
+  isLoading,
 }: {
   products: AdminProductListItem[];
   categories: Category[];
+  isLoading: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,7 +43,6 @@ export default function ProductTable({
 
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("categoryId") || "";
-  const showDeleted = searchParams.get("showDeleted") === "true";
   const isNewArrival = searchParams.get("isNewArrival") === "true";
   const isTopSelling = searchParams.get("isTopSelling") === "true";
 
@@ -47,7 +51,7 @@ export default function ProductTable({
       if (localSearch !== search) {
         updateFilters({ search: localSearch });
       }
-    }, 300);
+    }, SEARCH_DEBOUNCE_DELAY);
     return () => clearTimeout(timer);
   }, [localSearch, search]);
 
@@ -64,7 +68,7 @@ export default function ProductTable({
         params.set(key, String(value));
       }
     });
-    router.push(`/admin/products?${params.toString()}`);
+    router.replace(`/admin/products?${params.toString()}`);
   };
 
   const handleDelete = async () => {
@@ -153,181 +157,171 @@ export default function ProductTable({
             </span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showDeleted}
-              onChange={(e) => updateFilters({ showDeleted: e.target.checked })}
-              className={adminCheckboxClassName}
-            />
-            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-black/65">
-              Show Deleted
-            </span>
-          </label>
         </div>
       </div>
-
-      <div className="overflow-x-auto border border-black">
-        <table className="w-full text-left">
-          <thead className="border-b border-black bg-black/2">
-            <tr>
-              <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
-                Product
-              </th>
-              <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
-                Category
-              </th>
-              <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
-                Price
-              </th>
-              <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
-                Status
-              </th>
-              <th className="px-6 py-4 text-right text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-black/10">
-            {products.length === 0 ? (
+      {isLoading ? (
+        <AdminProductListSkeleton />
+      ) : (
+        <div className="overflow-x-auto border border-black">
+          <table className="w-full text-left">
+            <thead className="border-b border-black bg-black/2">
               <tr>
-                <td colSpan={5} className="px-0 py-0 border-none">
-                  <AdminEmptyState
-                    title={
-                      search ||
-                      categoryId ||
-                      isNewArrival ||
-                      isTopSelling ||
-                      showDeleted
-                        ? "No Matching Products"
-                        : "No Products Yet"
-                    }
-                    description={
-                      search ||
-                      categoryId ||
-                      isNewArrival ||
-                      isTopSelling ||
-                      showDeleted
-                        ? "Try adjusting your filters or search terms to find what you're looking for."
-                        : "Your catalog is empty. Start by adding your first product with variants and images."
-                    }
-                    actionLabel="Add Product"
-                    actionHref="/admin/products/new"
-                  />
-                </td>
+                <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
+                  Product
+                </th>
+                <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
+                  Category
+                </th>
+                <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
+                  Price
+                </th>
+                <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-right text-[11px] font-black uppercase tracking-[0.2em] text-black/45">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              products.map((product) => {
-                const category = categories.find(
-                  (c) => c.id === product.category_id,
-                );
-                return (
-                  <tr key={product.id} className="group hover:bg-black/1">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="relative h-12 w-12 shrink-0 border border-black bg-white overflow-hidden">
-                          {product.image_cover ? (
-                            <Image
-                              src={product.image_cover}
-                              alt={product.title}
-                              fill
-                              className="object-contain"
-                            />
+            </thead>
+            <tbody className="divide-y divide-black/10">
+              {products.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-0 py-0 border-none">
+                    <AdminEmptyState
+                      title={
+                        search ||
+                        categoryId ||
+                        isNewArrival ||
+                        isTopSelling
+                          ? "No Matching Products"
+                          : "No Products Yet"
+                      }
+                      description={
+                        search ||
+                        categoryId ||
+                        isNewArrival ||
+                        isTopSelling 
+                          ? "Try adjusting your filters or search terms to find what you're looking for."
+                          : "Your catalog is empty. Start by adding your first product with variants and images."
+                      }
+                      actionLabel="Add Product"
+                      actionHref="/admin/products/new"
+                    />
+                  </td>
+                </tr>
+              ) : (
+                products.map((product) => {
+                  const category = categories.find(
+                    (c) => c.id === product.category_id,
+                  );
+                  return (
+                    <tr key={product.id} className="group hover:bg-black/1">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="relative h-12 w-12 shrink-0 border border-black bg-white overflow-hidden">
+                            {product.image_cover ? (
+                              <Image
+                                src={product.image_cover}
+                                alt={product.title}
+                                fill
+                                className="object-contain"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center bg-black/5 text-[10px] font-bold text-black/20">
+                                NO IMG
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-black uppercase tracking-tight text-black">
+                              {product.title}
+                            </p>
+                            <p className="text-[10px] font-bold text-black/40">
+                              ID: #{product.id}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-xs font-bold uppercase tracking-wide text-black/60">
+                          {category?.title || "None"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-black text-black">
+                          {product.min_price} EGP
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-2">
+                          {product.is_deleted ? (
+                            <AdminStatusBadge label="Deleted" tone="danger" />
                           ) : (
-                            <div className="flex h-full items-center justify-center bg-black/5 text-[10px] font-bold text-black/20">
-                              NO IMG
-                            </div>
+                            <AdminStatusBadge label="Active" tone="success" />
+                          )}
+
+                          {(() => {
+                            const totalStock =
+                              product.variants?.reduce(
+                                (acc, v) => acc + v.stock,
+                                0,
+                              ) ?? 0;
+                            const hasOutOfStock = product.variants?.some(
+                              (v) => v.stock === 0,
+                            );
+
+                            if (totalStock === 0) {
+                              return (
+                                <AdminStatusBadge
+                                  label="Out of Stock"
+                                  tone="danger"
+                                />
+                              );
+                            } else if (hasOutOfStock) {
+                              return (
+                                <AdminStatusBadge
+                                  label="Partial OOS"
+                                  tone="warning"
+                                />
+                              );
+                            } else if (totalStock <= 5) {
+                              return (
+                                <AdminStatusBadge
+                                  label="Low Stock"
+                                  tone="warning"
+                                />
+                              );
+                            }
+                            return null;
+                          })()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/admin/products/${product.id}/edit`}
+                            className="flex h-8 w-8 items-center justify-center border border-black transition hover:bg-black hover:text-white"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                          {!product.is_deleted && (
+                            <button
+                              onClick={() => setDeleteId(product.id)}
+                              className="flex h-8 w-8 items-center justify-center border border-black text-red-600 transition hover:bg-red-600 hover:text-white"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           )}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-black uppercase tracking-tight text-black">
-                            {product.title}
-                          </p>
-                          <p className="text-[10px] font-bold text-black/40">
-                            ID: #{product.id}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-bold uppercase tracking-wide text-black/60">
-                        {category?.title || "None"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-black text-black">
-                        {product.min_price} EGP
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col gap-2">
-                        {product.is_deleted ? (
-                          <AdminStatusBadge label="Deleted" tone="danger" />
-                        ) : (
-                          <AdminStatusBadge label="Active" tone="success" />
-                        )}
-
-                        {(() => {
-                          const totalStock =
-                            product.variants?.reduce(
-                              (acc, v) => acc + v.stock,
-                              0,
-                            ) ?? 0;
-                          const hasOutOfStock = product.variants?.some(
-                            (v) => v.stock === 0,
-                          );
-
-                          if (totalStock === 0) {
-                            return (
-                              <AdminStatusBadge
-                                label="Out of Stock"
-                                tone="danger"
-                              />
-                            );
-                          } else if (hasOutOfStock) {
-                            return (
-                              <AdminStatusBadge
-                                label="Partial OOS"
-                                tone="warning"
-                              />
-                            );
-                          } else if (totalStock <= 5) {
-                            return (
-                              <AdminStatusBadge
-                                label="Low Stock"
-                                tone="warning"
-                              />
-                            );
-                          }
-                          return null;
-                        })()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/admin/products/${product.id}/edit`}
-                          className="flex h-8 w-8 items-center justify-center border border-black transition hover:bg-black hover:text-white"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                        {!product.is_deleted && (
-                          <button
-                            onClick={() => setDeleteId(product.id)}
-                            className="flex h-8 w-8 items-center justify-center border border-black text-red-600 transition hover:bg-red-600 hover:text-white"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <ConfirmDialog
         open={!!deleteId}

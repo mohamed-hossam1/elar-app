@@ -1,41 +1,34 @@
+"use client";
+
 import ProductGrid from "./ProductGrid";
 import ProductListingClient from "./ProductListingClient";
 import ProductPagination from "./ProductPagination";
 import ProductFiltersSidebar from "./ProductFiltersSidebar";
 import ProductEmptyState from "./ProductEmptyState";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import { getProductListing, getProductPriceRange } from "@/actions/productsAction";
-import { getAllCategories } from "@/actions/categoriesAction";
-import { ProductListingQuery } from "@/types/Product";
+import { ProductListItem, ProductListingQuery } from "@/types/Product";
+import { Category } from "@/types/Category";
 
 interface ProductListingProps {
   query: ProductListingQuery;
+  products: ProductListItem[];
+  total: number;
+  pageCount: number;
+  categories: Category[];
+  catalogMin: number;
+  catalogMax: number;
 }
 
 
-export default async function ProductListing({ query }: ProductListingProps) {
-  const [listingResponse, categoriesResponse, priceRangeResponse] = await Promise.all([
-    getProductListing(query),
-    getAllCategories(),
-    getProductPriceRange(),
-  ]);
-
-  if (!listingResponse.success || !categoriesResponse.success || !priceRangeResponse.success) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
-        <h2 className="text-2xl font-bold text-gray-900 font-satoshi uppercase">Unable to load products</h2>
-        <p className="mt-2 text-black/60">
-          We encountered an error while fetching the catalog. Please try refreshing the page.
-        </p>
-      </div>
-    );
-  }
-
-  const { data: products, total, pageCount } = listingResponse.data;
-  const categories = categoriesResponse.data;
-  const { min: catalogMin, max: catalogMax } = priceRangeResponse.data;
-
-  
+export default function ProductListing({
+  query,
+  products,
+  total,
+  pageCount,
+  categories,
+  catalogMin,
+  catalogMax,
+}: ProductListingProps) {
   const activeCategory = categories.find(c => c.slug === query.category);
   const categoryName = activeCategory ? activeCategory.title : "All Products";
 
