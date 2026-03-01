@@ -10,7 +10,6 @@ import { getAllCategories } from "@/actions/categoriesAction";
 import ProductTable from "@/components/admin/products/ProductTable";
 
 import { AdminProductFilters } from "@/types/Admin";
-import AdminProductListSkeleton from "@/components/skeleton/AdminProductListSkeleton";
 
 export default function ProductListContent() {
   const searchParams = useSearchParams();
@@ -47,7 +46,8 @@ export default function ProductListContent() {
       };
     },
 
-    staleTime: 1000 * 60 * 60,
+    staleTime: 0,
+    gcTime: 0,
   });
   const products = data?.productsRes?.success ? data.productsRes.data : [];
 
@@ -55,5 +55,11 @@ export default function ProductListContent() {
     ? data.categoriesRes.data
     : [];
 
-  return <ProductTable products={products} categories={categories} isLoading={isLoading} />;
+  return (
+    <ProductTable
+      products={products}
+      categories={categories}
+      isLoading={isLoading}
+    />
+  );
 }

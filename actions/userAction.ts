@@ -1,11 +1,15 @@
 "use server";
 
 import { ADMIN_ROLES } from "@/lib/admin";
-import { revalidateUserPaths } from "@/lib/admin/revalidate";
+import { revalidateUserPaths } from "@/lib/cache/revalidate";
 import { getCurrentUserProfile, isAdminRole } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { AdminRole, AdminUserFilters, DeleteUserAccessPayload } from "@/types/Admin";
+import {
+  AdminRole,
+  AdminUserFilters,
+  DeleteUserAccessPayload,
+} from "@/types/Admin";
 import { User } from "@/types/User";
 
 interface UserData {

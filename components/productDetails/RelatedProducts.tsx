@@ -1,15 +1,28 @@
+"use client";
 import { getRelatedProducts } from "@/actions/productsAction";
 import CardList from "../showProducts/CardList";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function RelatedProducts({
+export default function RelatedProducts({
   categoryId,
   productId,
 }: {
   categoryId: number;
   productId: number;
 }) {
-  const result = await getRelatedProducts(categoryId, productId);
-  const products = "data" in result ? result.data : [];
+  const { data, isLoading } = useQuery({
+    queryKey: ["related-products", categoryId, productId],
+
+    queryFn: async () => {
+      const productsRes = await getRelatedProducts(categoryId, productId);
+
+      return {
+        productsRes,
+      };
+    },
+  });
+
+  const products = data?.productsRes?.success ? data.productsRes.data : [];
 
   if (products.length === 0) return null;
 

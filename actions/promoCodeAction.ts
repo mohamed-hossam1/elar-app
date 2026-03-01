@@ -1,11 +1,12 @@
-"use server"
-import { CACHE_TAGS } from "@/constants/cacheTages";
+"use server";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminPromoFilters } from "@/types/Admin";
 import { PromoCode } from "@/types/PromoCode";
 import { cacheLife, cacheTag } from "next/cache";
 import { verifyAdmin } from "./userAction";
-import { revalidatePromoPaths } from "@/lib/admin/revalidate";
+import { revalidatePromoPaths } from "@/lib/cache/revalidate";
 import { createClient } from "@/lib/supabase/server";
 
 export const validatePromoCode = async function validatePromoCode(
@@ -30,7 +31,7 @@ export const validatePromoCode = async function validatePromoCode(
 > {
   "use cache";
   cacheTag(CACHE_TAGS.promoCodes);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
   const supabase = createAdminClient();
 
   try {

@@ -7,14 +7,16 @@ import { Toaster } from "@/components/ui/sonner";
 import { satoshi, integralCF } from "@/lib/fonts";
 
 import QueryProvider from "@/providers/query-provider";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://elar.app'),
+  metadataBase: new URL("https://elar.app"),
   title: {
     template: "%s | ELAR",
     default: "ELAR | Premium Fashion Store",
   },
-  description: "Experience a curated collection of premium fashion designed for the modern individual.",
+  description:
+    "Experience a curated collection of premium fashion designed for the modern individual.",
 };
 
 export default function RootLayout({
@@ -27,24 +29,27 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://ik.imagekit.io" />
       </head>
-      <body className={`${satoshi.variable} ${integralCF.variable} font-satoshi antialiased`}>
-        <QueryProvider>
-          <StateProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
+      <body
+        className={`${satoshi.variable} ${integralCF.variable} font-satoshi antialiased`}
+      >
+        <Suspense fallback={<div className="min-h-screen" />}>
+          <QueryProvider>
+            <StateProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </StateProvider>
+          </QueryProvider>
+        </Suspense>
 
-              <Analytics />
-            </ThemeProvider>
-          </StateProvider>
-        </QueryProvider>
+        <Analytics />
       </body>
     </html>
   );
 }
-

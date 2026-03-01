@@ -2,9 +2,10 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { CACHE_TAGS } from "@/constants/cacheTages";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { verifyAdmin } from "./userAction";
-import { revalidateDeliveryPaths } from "@/lib/admin/revalidate";
+import { revalidateDeliveryPaths } from "@/lib/cache/revalidate";
 import { createClient } from "@/lib/supabase/server";
 import { DeliveryInput } from "@/types/Admin";
 import { Delivery } from "@/types/deliveryFee";
@@ -14,7 +15,7 @@ export const getCities = async function getCities(): Promise<
 > {
   "use cache";
   cacheTag(CACHE_TAGS.delivery);
-  cacheLife("days");
+  cacheLife(CACHE_DURATION.days);
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -38,7 +39,7 @@ export const getDeliveryFee = async function getDeliveryFee(
 > {
   "use cache";
   cacheTag(CACHE_TAGS.delivery);
-  cacheLife("days");
+  cacheLife(CACHE_DURATION.days);
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -69,7 +70,7 @@ async function getCachedDeliverySettings(): Promise<
 > {
   "use cache";
   cacheTag(CACHE_TAGS.delivery);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -102,7 +103,7 @@ async function getCachedDeliverySettingById(
 > {
   "use cache";
   cacheTag(CACHE_TAGS.delivery, CACHE_TAGS.deliverySetting(id));
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
   const { data, error } = await supabase

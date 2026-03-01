@@ -1,7 +1,8 @@
 "use server";
 
 import { cacheLife, cacheTag } from "next/cache";
-import { CACHE_TAGS } from "@/constants/cacheTages";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -15,7 +16,7 @@ import {
 } from "@/types/Product";
 import { AdminProductFilters } from "@/types/Admin";
 import { verifyAdmin } from "./userAction";
-import { revalidateCatalogPaths } from "@/lib/admin/revalidate";
+import { revalidateCatalogPaths } from "@/lib/cache/revalidate";
 
 export const getNewArrivals = async (
   limit = 4,
@@ -25,7 +26,7 @@ export const getNewArrivals = async (
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
 
@@ -52,7 +53,7 @@ export const getTopSelling = async (
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
 
@@ -78,7 +79,7 @@ export const getProductById = async (
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products, CACHE_TAGS.product(id));
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
 
@@ -112,7 +113,7 @@ export const getRelatedProducts = async (
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products, CACHE_TAGS.category(categoryId));
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
 
@@ -139,7 +140,7 @@ export const getProductListing = async (
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
   const {
@@ -247,7 +248,7 @@ export const getProductPriceRange = async (): Promise<
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products);
-  cacheLife("days");
+  cacheLife(CACHE_DURATION.days);
 
   const supabase = createAdminClient();
 
@@ -282,7 +283,7 @@ export const getProducts = async ({
 > => {
   "use cache";
   cacheTag(CACHE_TAGS.products);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
 
   const supabase = createAdminClient();
 

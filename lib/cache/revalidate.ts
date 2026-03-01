@@ -1,7 +1,6 @@
-"use server"
-import { CACHE_TAGS } from "@/constants/cacheTages";
+"use server";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { updateTag } from "next/cache";
-
 
 function updateTags(tags: string[]) {
   for (const tag of tags) {

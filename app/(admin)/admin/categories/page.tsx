@@ -23,12 +23,8 @@ export default function AdminCategoriesPage() {
       />
 
       <Suspense fallback={<AdminCategoryListSkeleton />}>
-        <CategoryListWrapper />
+        <CategoryListContent />
       </Suspense>
     </div>
   );
-}
-
-async function CategoryListWrapper() {
-  return <CategoryListContent />;
 }

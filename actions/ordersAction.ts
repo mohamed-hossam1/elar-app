@@ -1,11 +1,11 @@
 "use server";
-import { ADMIN_ORDER_STATUSES } from '@/lib/admin';
-import { isAdminOrderStatus } from '@/lib/admin';
+import { ADMIN_ORDER_STATUSES } from "@/lib/admin";
+import { isAdminOrderStatus } from "@/lib/admin";
 
 import {
   revalidateOrderPaths,
   revalidatePromoPaths,
-} from "@/lib/admin/revalidate";
+} from "@/lib/cache/revalidate";
 import { createClient } from "@/lib/supabase/server";
 import { AdminOrderFilters } from "@/types/Admin";
 import { CreateOrderData, Order } from "@/types/Order";

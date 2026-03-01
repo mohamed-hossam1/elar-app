@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateCatalogPaths } from "@/lib/admin/revalidate";
+import { revalidateCatalogPaths } from "@/lib/cache/revalidate";
 import { createClient } from "@/lib/supabase/server";
 import { verifyAdmin } from "./userAction";
 import { RankedProduct, RankMode, RankUpdateItem } from "@/types/Rank";

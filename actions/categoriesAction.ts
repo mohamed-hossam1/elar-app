@@ -1,19 +1,20 @@
 "use server";
 
 import { cacheLife, cacheTag } from "next/cache";
-import { CACHE_TAGS } from "@/constants/cacheTages";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Category } from "@/types/Category";
 import { verifyAdmin } from "./userAction";
 import { createClient } from "@/lib/supabase/server";
-import { revalidateCategoryPaths } from "@/lib/admin/revalidate";
+import { revalidateCategoryPaths } from "@/lib/cache/revalidate";
 
 export const getAllCategories = async function getAllCategories(): Promise<
   { success: true; data: Category[] } | { success: false; message: string }
 > {
   "use cache";
   cacheTag(CACHE_TAGS.categories);
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("categories")
@@ -50,7 +51,7 @@ export const getCategoryById = async function getCategoryById(
 > {
   "use cache";
   cacheTag(CACHE_TAGS.categories, CACHE_TAGS.category(id));
-  cacheLife("hours");
+  cacheLife(CACHE_DURATION.hours);
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("categories")
