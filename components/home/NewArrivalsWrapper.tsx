@@ -1,4 +1,4 @@
-import { getNewArrivals } from "@/actions/productsAction";
+import { getNewArrivals } from "@/lib/queries/products";
 import ProductSection from "@/components/home/ProductSection";
 import ROUTES from "@/constants/routes";
 

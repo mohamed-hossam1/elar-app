@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getDeliverySettingById } from "@/actions/deliveryAction";
+import { getDeliverySettingById } from "@/lib/queries/delivery";
 import { DeliveryForm } from "@/components/admin/delivery/DeliveryForm";
 
 export default async function EditDeliveryContent({ id }: { id: number }) {

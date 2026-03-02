@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { getProductById } from "@/actions/productsAction";
-import { getAllCategories } from "@/actions/categoriesAction";
+import { getProductById } from "@/lib/queries/products";
+import { getAllCategories } from "@/lib/queries/categories";
 import ProductForm from "@/components/admin/products/ProductForm";
 
 export default async function EditProductContent({ id }: { id: number }) {

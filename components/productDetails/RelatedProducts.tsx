@@ -1,5 +1,5 @@
 "use client";
-import { getRelatedProducts } from "@/actions/productsAction";
+import { getRelatedProducts } from "@/lib/queries/products";
 import CardList from "../showProducts/CardList";
 import { useQuery } from "@tanstack/react-query";
 

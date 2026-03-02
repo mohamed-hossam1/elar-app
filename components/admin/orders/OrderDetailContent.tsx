@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getAdminOrderById } from "@/actions/ordersAction";
+import { getAdminOrderById } from "@/lib/queries/orders";
 import { OrderDetail } from "@/components/admin/orders/OrderDetail";
 
 export default async function OrderDetailContent({ id }: { id: number }) {

@@ -1,4 +1,4 @@
-import { getAdminAnalyticsDashboard } from "@/actions/analyticsAction";
+import { getAdminAnalyticsDashboard } from "@/lib/queries/analytics";
 import { AdminAnalyticsFilters } from "@/types/AdminAnalytics";
 import { AnalyticsFilterBar } from "@/components/admin/analytics/AnalyticsFilterBar";
 import { KpiGrid } from "@/components/admin/analytics/KpiGrid";

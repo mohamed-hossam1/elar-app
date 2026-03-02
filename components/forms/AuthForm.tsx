@@ -9,7 +9,8 @@ import {
   signInValidationSchema,
   signUpValidationSchema,
 } from "@/lib/validation/authValidations";
-import { GetUser, SignInSupabase, SignUpSupabase } from "@/actions/userAction";
+import { GetUser } from "@/lib/queries/users";
+import { SignInSupabase, SignUpSupabase } from "@/actions/userAction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/stores/userStore";
 import { useCart } from "@/stores/cartStore";

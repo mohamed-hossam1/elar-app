@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addAddress, updateAddress } from "@/actions/addressAction";
-import { getCities } from "@/actions/deliveryAction";
+import { getCities } from "@/lib/queries/delivery";
 import { useQuery } from "@tanstack/react-query";
 import { Address } from "@/types/Address";
 import Toast from "@/components/ui/Toast";

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCategoryById } from "@/actions/categoriesAction";
+import { getCategoryById } from "@/lib/queries/categories";
 import CategoryForm from "@/components/admin/categories/CategoryForm";
 
 export default async function EditCategoryContent({ id }: { id: number }) {

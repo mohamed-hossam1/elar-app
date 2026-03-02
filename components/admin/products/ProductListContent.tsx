@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
-import { getProducts } from "@/actions/productsAction";
-import { getAllCategories } from "@/actions/categoriesAction";
+import { getProducts } from "@/lib/queries/products";
+import { getAllCategories } from "@/lib/queries/categories";
 
 import ProductTable from "@/components/admin/products/ProductTable";
 

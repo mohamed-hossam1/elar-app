@@ -1,4 +1,4 @@
-import { getTopSelling } from "@/actions/productsAction";
+import { getTopSelling } from "@/lib/queries/products";
 import ProductSection from "@/components/home/ProductSection";
 import ROUTES from "@/constants/routes";
 

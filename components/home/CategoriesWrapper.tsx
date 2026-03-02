@@ -1,4 +1,4 @@
-import { getAllCategories } from "@/actions/categoriesAction";
+import { getAllCategories } from "@/lib/queries/categories";
 import BrowseByStyle from "@/components/home/BrowseByStyle";
 import { Category } from "@/types/Category";
 

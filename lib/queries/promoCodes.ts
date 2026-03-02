@@ -1,0 +1,186 @@
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { AdminPromoFilters } from "@/types/Admin";
+import { PromoCode } from "@/types/PromoCode";
+import { cacheLife, cacheTag } from "next/cache";
+import { verifyAdmin } from "@/actions/userAction";
+import { createClient } from "@/lib/supabase/server";
+
+export const validatePromoCode = async function validatePromoCode(
+  promoCode: string,
+  price: number,
+): Promise<
+  | {
+      success: true;
+      message: string;
+      data: {
+        originalPrice: number;
+        finalPrice: number;
+        discountApplied: number;
+        coupon: PromoCode;
+        isConditionMet: boolean;
+      };
+    }
+  | {
+      success: false;
+      message: string;
+    }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.promoCodes);
+  cacheLife(CACHE_DURATION.hours);
+  const supabase = createAdminClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("coupons")
+      .select("*")
+      .eq("code", promoCode)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      return { success: false, message: "Database error." };
+    }
+
+    const coupon = data as PromoCode | null;
+
+    if (!coupon) {
+      return { success: false, message: "Promo code not found." };
+    }
+
+    if (!coupon.is_active) {
+      return { success: false, message: "Promo code is not active." };
+    }
+
+    if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+      return { success: false, message: "Promo code has expired." };
+    }
+
+    if (coupon.max_uses !== null && coupon.used_count >= coupon.max_uses) {
+      return { success: false, message: "Promo code usage limit reached." };
+    }
+
+    const isConditionMet = price >= coupon.min_purchase;
+
+    let discountAmount = 0;
+    if (isConditionMet) {
+      if (coupon.type === "percentage") {
+        const pct = Math.max(0, Math.min(100, coupon.value));
+        discountAmount = (price * pct) / 100;
+      } else {
+        discountAmount = Math.min(price, coupon.value);
+      }
+    }
+
+    const finalPrice = Math.round((price - discountAmount) * 100) / 100;
+
+    return {
+      success: true,
+      message: isConditionMet
+        ? "Promo code applied."
+        : `Minimum purchase of EGP ${coupon.min_purchase} required.`,
+      data: {
+        originalPrice: price,
+        finalPrice,
+        discountApplied: discountAmount,
+        isConditionMet,
+        coupon: {
+          ...coupon,
+          discount_percentage:
+            coupon.type === "percentage" ? coupon.value : undefined,
+        } as PromoCode,
+      },
+    };
+  } catch (error: any) {
+    console.error("validatePromoCode unexpected error", error);
+    return { success: false, message: "Unexpected error." };
+  }
+};
+
+export async function getPromoCodes(
+  filters: AdminPromoFilters = {},
+): Promise<
+  { success: true; data: PromoCode[] } | { success: false; message: string }
+> {
+  const verification = await verifyAdmin();
+  if (!verification.success) return verification;
+
+  const supabase = await createClient();
+  const { search, status = "all" } = filters;
+
+  try {
+    let query = supabase
+      .from("coupons")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (search) {
+      query = query.ilike("code", `%${search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return { success: false, message: error.message };
+    }
+
+    const now = new Date();
+    const filtered = (data as PromoCode[]).filter((promo) => {
+      const isExpired = promo.expires_at
+        ? new Date(promo.expires_at) < now
+        : false;
+      const isExhausted =
+        promo.max_uses !== null && promo.used_count >= promo.max_uses;
+
+      switch (status) {
+        case "active":
+          return promo.is_active && !isExpired && !isExhausted;
+        case "inactive":
+          return !promo.is_active;
+        case "expired":
+          return isExpired;
+        case "exhausted":
+          return isExhausted;
+        default:
+          return true;
+      }
+    });
+
+    return { success: true, data: filtered };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Unexpected error." };
+  }
+}
+
+export async function getPromoCodeById(
+  id: number,
+): Promise<
+  { success: true; data: PromoCode } | { success: false; message: string }
+> {
+  const verification = await verifyAdmin();
+  if (!verification.success) return verification;
+
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("coupons")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      return { success: false, message: error.message };
+    }
+
+    if (!data) {
+      return { success: false, message: "Promo code not found" };
+    }
+
+    return { success: true, data: data as PromoCode };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Unexpected error." };
+  }
+}

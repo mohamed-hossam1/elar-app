@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPromoCodeById } from "@/actions/promoCodeAction";
+import { getPromoCodeById } from "@/lib/queries/promoCodes";
 import { PromoCodeForm } from "@/components/admin/promo-codes/PromoCodeForm";
 
 export default async function EditPromoCodeContent({ id }: { id: number }) {

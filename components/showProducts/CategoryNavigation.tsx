@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getAllCategories } from "@/actions/categoriesAction";
+import { getAllCategories } from "@/lib/queries/categories";
 import ROUTES from "@/constants/routes";
 
 export default async function CategoryNavigation({

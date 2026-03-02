@@ -6,8 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Loader2, Save, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { getAllCategories } from "@/actions/categoriesAction";
-import { getRankedProducts, saveRankedProducts } from "@/actions/ranksAction";
+import { getAllCategories } from "@/lib/queries/categories";
+import { getRankedProducts } from "@/lib/queries/ranks";
+import { saveRankedProducts } from "@/actions/ranksAction";
 import {
   AdminPageHeader,
   adminSelectClassName,

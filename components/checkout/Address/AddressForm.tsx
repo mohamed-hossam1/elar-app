@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { addAddress } from "@/actions/addressAction";
-import { getCities } from "@/actions/deliveryAction";
+import { getCities } from "@/lib/queries/delivery";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 

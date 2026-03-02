@@ -9,7 +9,7 @@ import {
 
 import ProductPageContent from "@/components/productDetails/ProductPageContent";
 import ProductDetailsSkeleton from "@/components/skeleton/ProductDetailsSkeleton";
-import { getProductById } from "@/actions/productsAction";
+import { getProductById } from "@/lib/queries/products";
 
 export async function generateMetadata({
   params,

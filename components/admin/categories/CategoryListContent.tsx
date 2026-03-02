@@ -1,5 +1,5 @@
-import { getAllCategories } from "@/actions/categoriesAction";
-import { getProducts } from "@/actions/productsAction";
+import { getAllCategories } from "@/lib/queries/categories";
+import { getProducts } from "@/lib/queries/products";
 import CategoryTable from "@/components/admin/categories/CategoryTable";
 
 export default async function CategoryListContent() {

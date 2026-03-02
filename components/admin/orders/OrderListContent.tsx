@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
-import { getAdminOrders } from "@/actions/ordersAction";
+import { getAdminOrders } from "@/lib/queries/orders";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import { OrderTable } from "@/components/admin/orders/OrderTable";
 import { AdminOrderFilters } from "@/types/Admin";

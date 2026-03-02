@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCities } from "@/actions/deliveryAction";
+import { getCities } from "@/lib/queries/delivery";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 

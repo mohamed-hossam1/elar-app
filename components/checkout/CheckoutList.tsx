@@ -6,7 +6,7 @@ import CheckoutSkeleton from "../skeleton/CheckoutSkeleton";
 import OrderSummary from "../cart/OrderSummary";
 import AddressStep from "./Address/AddressStep";
 import { getAddresses } from "@/actions/addressAction";
-import { getDeliveryFee } from "@/actions/deliveryAction";
+import { getDeliveryFee } from "@/lib/queries/delivery";
 import { useQuery } from "@tanstack/react-query";
 
 import PaymentStep from "./Payment/PaymentStep";

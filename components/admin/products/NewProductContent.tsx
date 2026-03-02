@@ -1,4 +1,4 @@
-import { getAllCategories } from "@/actions/categoriesAction";
+import { getAllCategories } from "@/lib/queries/categories";
 import ProductForm from "@/components/admin/products/ProductForm";
 
 export default async function NewProductContent() {

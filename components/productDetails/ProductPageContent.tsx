@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getProductById } from "@/actions/productsAction";
+import { getProductById } from "@/lib/queries/products";
 import {
   getBreadcrumbSchema,
   getProductSchema,

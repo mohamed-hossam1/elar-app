@@ -1,6 +1,6 @@
 "use client";
 
-import { validatePromoCode } from "@/actions/promoCodeAction";
+import { validatePromoCode } from "@/lib/queries/promoCodes";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import { useState } from "react";

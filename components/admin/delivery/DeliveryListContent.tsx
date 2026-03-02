@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getDeliverySettings } from "@/actions/deliveryAction";
+import { getDeliverySettings } from "@/lib/queries/delivery";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import { DeliveryTable } from "@/components/admin/delivery/DeliveryTable";
 

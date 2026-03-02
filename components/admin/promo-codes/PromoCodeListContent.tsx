@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
-import { getPromoCodes } from "@/actions/promoCodeAction";
+import { getPromoCodes } from "@/lib/queries/promoCodes";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import { PromoCodeTable } from "@/components/admin/promo-codes/PromoCodeTable";
 import { AdminPromoFilters, PromoStatusFilter } from "@/types/Admin";

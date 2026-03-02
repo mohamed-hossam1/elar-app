@@ -1,3 +1,3 @@
 <!-- SPECKIT START -->
-Current feature plan: specs/001-cache-infra-fixes/plan.md
+Current feature plan: specs/002-separate-cached-fetchers/plan.md
 <!-- SPECKIT END -->

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { AdminNotice } from "@/components/admin/AdminUI";
-import { getAdminUserById, GetUser } from "@/actions/userAction";
-import { getAdminOrders } from "@/actions/ordersAction";
+import { GetUser, getAdminUserById } from "@/lib/queries/users";
+import { getAdminOrders } from "@/lib/queries/orders";
 import UserProfileCard from "@/components/admin/users/UserProfileCard";
 import UserOrdersTable from "@/components/admin/users/UserOrdersTable";
 
