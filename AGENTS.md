@@ -1,3 +1,3 @@
 <!-- SPECKIT START -->
-Current feature plan: specs/002-separate-cached-fetchers/plan.md
+Current feature plan: specs/003-add-cache-admin-fetchers/plan.md
 <!-- SPECKIT END -->

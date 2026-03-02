@@ -1,4 +1,8 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { verifyAdmin } from "@/actions/userAction";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { AdminUserFilters } from "@/types/Admin";
 import { User } from "@/types/User";
@@ -34,7 +38,19 @@ export async function getAdminUsers(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedAdminUsers(filters);
+}
+
+async function getCachedAdminUsers(
+  filters: AdminUserFilters,
+): Promise<
+  { success: true; data: User[] } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.users);
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const { search, role, dateFrom, dateTo } = filters;
 
   if (dateFrom && dateTo && dateFrom > dateTo) {
@@ -82,7 +98,19 @@ export async function getAdminUserById(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedAdminUserById(userId);
+}
+
+async function getCachedAdminUserById(
+  userId: string,
+): Promise<
+  { success: true; data: User } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.users, CACHE_TAGS.user(userId));
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("users")
     .select("*")

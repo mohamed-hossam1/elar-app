@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminOrderFilters } from "@/types/Admin";
 import { Order } from "@/types/Order";
 import { verifyAdmin } from "@/actions/userAction";
@@ -11,7 +14,19 @@ export async function getAdminOrders(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedAdminOrders(filters);
+}
+
+async function getCachedAdminOrders(
+  filters: AdminOrderFilters,
+): Promise<
+  { success: true; data: Order[] } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.orders);
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const {
     search,
     status,
@@ -84,7 +99,19 @@ export async function getAdminOrderById(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedAdminOrderById(orderId);
+}
+
+async function getCachedAdminOrderById(
+  orderId: number,
+): Promise<
+  { success: true; data: Order } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.orders, CACHE_TAGS.order(orderId));
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("orders")
     .select(

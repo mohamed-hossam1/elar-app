@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import {
   AdminAnalyticsFilters,
   AdminAnalyticsDashboard,
@@ -10,10 +11,14 @@ import {
   CustomerActivitySummary,
   RecentTransactionRow,
 } from '@/types/AdminAnalytics';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { requireAdmin } from '@/lib/auth/admin';
+import { CACHE_DURATION } from '@/lib/cache/cache-life';
+import { CACHE_TAGS } from '@/lib/cache/tags';
 import { Order, OrderItem } from '@/types/Order';
 import { User } from '@/types/User';
+
+type SupabaseClient = ReturnType<typeof createAdminClient>;
 
 function parseAnalyticsRange(
   filters: AdminAnalyticsFilters,
@@ -99,7 +104,7 @@ function generateDateLabels(from: Date, to: Date): string[] {
 }
 
 async function fetchOrdersInRange(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   from: Date,
   to: Date,
 ): Promise<(Order & { order_items?: OrderItem[] })[]> {
@@ -119,7 +124,7 @@ async function fetchOrdersInRange(
 }
 
 async function fetchUsersCreatedInRange(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   from: Date,
   to: Date,
 ): Promise<User[]> {
@@ -329,6 +334,30 @@ export async function getAdminAnalyticsDashboard(
   try {
     await requireAdmin();
 
+    return getCachedAdminAnalytics(filters);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    if (message === 'Unauthorized') {
+      return {
+        success: false,
+        message: 'Admin access required',
+      };
+    }
+    return {
+      success: false,
+      message: `Analytics retrieval failed: ${message}`,
+    };
+  }
+}
+
+async function getCachedAdminAnalytics(
+  filters: AdminAnalyticsFilters,
+): Promise<AdminAnalyticsResponse> {
+  "use cache";
+  cacheTag(CACHE_TAGS.orders, CACHE_TAGS.users);
+  cacheLife(CACHE_DURATION.minutes);
+
+  try {
     const dateRange = parseAnalyticsRange(filters);
     if (!dateRange) {
       return {
@@ -337,8 +366,7 @@ export async function getAdminAnalyticsDashboard(
       };
     }
 
-    const supabase = await createClient();
-
+    const supabase = createAdminClient();
     const comparisonRange = getComparisonRange(dateRange);
 
     const [ordersInRange, ordersInComparison, newUsersInRange] = await Promise.all([

@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_DURATION } from "@/lib/cache/cache-life";
+import { CACHE_TAGS } from "@/lib/cache/tags";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyAdmin } from "@/actions/userAction";
 import { RankedProduct, RankMode } from "@/types/Rank";
 
@@ -19,7 +22,20 @@ export async function getRankedProducts(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedRankedProducts(mode, categoryId);
+}
+
+async function getCachedRankedProducts(
+  mode: RankMode,
+  categoryId?: number,
+): Promise<
+  { success: true; data: RankedProduct[] } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.products);
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const columnName = MODE_COLUMN_MAP[mode];
 
   let query = supabase

@@ -11,4 +11,5 @@ export const CACHE_TAGS = {
   deliverySetting: (id: number | string) => `delivery:${id}`,
   order:     (id: number | string) => `order:${id}`,
   user:      (id: string)          => `user:${id}`,
+  promoCode: (id: number | string) => `promoCode:${id}`,
 };

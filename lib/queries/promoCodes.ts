@@ -5,7 +5,6 @@ import { AdminPromoFilters } from "@/types/Admin";
 import { PromoCode } from "@/types/PromoCode";
 import { cacheLife, cacheTag } from "next/cache";
 import { verifyAdmin } from "@/actions/userAction";
-import { createClient } from "@/lib/supabase/server";
 
 export const validatePromoCode = async function validatePromoCode(
   promoCode: string,
@@ -107,7 +106,19 @@ export async function getPromoCodes(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedPromoCodes(filters);
+}
+
+async function getCachedPromoCodes(
+  filters: AdminPromoFilters,
+): Promise<
+  { success: true; data: PromoCode[] } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.promoCodes);
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
   const { search, status = "all" } = filters;
 
   try {
@@ -162,7 +173,19 @@ export async function getPromoCodeById(
   const verification = await verifyAdmin();
   if (!verification.success) return verification;
 
-  const supabase = await createClient();
+  return getCachedPromoCodeById(id);
+}
+
+async function getCachedPromoCodeById(
+  id: number,
+): Promise<
+  { success: true; data: PromoCode } | { success: false; message: string }
+> {
+  "use cache";
+  cacheTag(CACHE_TAGS.promoCodes, CACHE_TAGS.promoCode(id));
+  cacheLife(CACHE_DURATION.minutes);
+
+  const supabase = createAdminClient();
 
   try {
     const { data, error } = await supabase
