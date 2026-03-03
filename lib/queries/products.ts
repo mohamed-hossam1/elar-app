@@ -1,3 +1,5 @@
+"use server"
+
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_DURATION } from "@/lib/cache/cache-life";
 import { CACHE_TAGS } from "@/lib/cache/tags";

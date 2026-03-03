@@ -1,6 +1,6 @@
 import ProductListContent from "@/components/products/ProductListContent";
 import { Metadata } from "next";
-import { Suspense } from "react";
+import SuspenseWithSearchParams from "@/components/SuspenseWithSearchParams";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
 import {
   getOgMetadata,
@@ -27,7 +27,11 @@ export const metadata: Metadata = {
   ),
 };
 
-export default function ProductsPage() {
+export default function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page: string }>;
+}) {
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", item: "/" },
     { name: "Products", item: "/products" },
@@ -39,9 +43,9 @@ export default function ProductsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Suspense fallback={<ShowProductsListSkeleton />}>
-        <ProductListContent />
-      </Suspense>
+      <SuspenseWithSearchParams fallback={<ShowProductsListSkeleton />}>
+        <ProductListContent searchParams={searchParams} />
+      </SuspenseWithSearchParams>
     </>
   );
 }

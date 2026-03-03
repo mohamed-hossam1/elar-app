@@ -43,7 +43,7 @@ export async function createPromoCode(
       return { success: false, message: error.message };
     }
 
-    revalidatePromoPaths();
+    revalidatePromoPaths(data.id);
     return {
       success: true,
       message: "Promo code created successfully.",
@@ -105,7 +105,7 @@ export async function updatePromoCode(
       return { success: false, message: error.message };
     }
 
-    revalidatePromoPaths();
+    revalidatePromoPaths(id);
     return {
       success: true,
       message: "Promo code updated successfully.",
@@ -134,7 +134,7 @@ export async function deletePromoCode(
       return { success: false, message: error.message };
     }
 
-    revalidatePromoPaths();
+    revalidatePromoPaths(id);
     return { success: true, message: "Promo code deleted successfully." };
   } catch (error: any) {
     console.error("deletePromoCode unexpected error", error);

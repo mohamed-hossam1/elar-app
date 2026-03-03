@@ -44,10 +44,14 @@ export async function generateMetadata({
   };
 }
 
-export default function ProductPage() {
+export default function ProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductPageContent />
+      <ProductPageContent params={params} />
     </Suspense>
   );
 }

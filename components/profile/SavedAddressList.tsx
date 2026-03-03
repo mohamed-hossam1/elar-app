@@ -5,7 +5,7 @@ import { getAddresses, deleteAddress } from "@/actions/addressAction";
 import { MapPin, Phone, Building, Plus, Trash2, Edit3 } from "lucide-react";
 import { Address } from "@/types/Address";
 import AddressForm from "./AddressForm";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 
 export default function SavedAddressList() {
   const [addresses, setAddresses] = useState<Address[]>([]);

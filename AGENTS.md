@@ -1,3 +1,5 @@
 <!-- SPECKIT START -->
-Current feature plan: specs/003-add-cache-admin-fetchers/plan.md
+
+Current feature plan: specs/007-final-cache-cleanup/plan.md
+
 <!-- SPECKIT END -->

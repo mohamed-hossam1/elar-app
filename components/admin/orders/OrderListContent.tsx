@@ -1,49 +1,36 @@
-"use client";
-
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
 import { getAdminOrders } from "@/lib/queries/orders";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import { OrderTable } from "@/components/admin/orders/OrderTable";
 import { AdminOrderFilters } from "@/types/Admin";
 
-export default function OrderListContent() {
-  const searchParams = useSearchParams();
+export default async function OrderListContent({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const filters = await searchParams;
 
-  const filters: AdminOrderFilters = useMemo(
-    () => {
-      const customerTypeParam = searchParams.get("customerType");
+  const adminFilters: AdminOrderFilters = {
+    search: filters.search || undefined,
+    status: filters.status || undefined,
+    paymentMethod: filters.paymentMethod || undefined,
+    customerType:
+      filters.customerType === "guest" || filters.customerType === "user"
+        ? filters.customerType
+        : undefined,
+    dateFrom: filters.dateFrom || undefined,
+    dateTo: filters.dateTo || undefined,
+  };
 
-      return {
-        search: searchParams.get("search") || undefined,
-        status: searchParams.get("status") || undefined,
-        paymentMethod: searchParams.get("paymentMethod") || undefined,
-        customerType:
-          customerTypeParam === "guest" || customerTypeParam === "user"
-            ? customerTypeParam
-            : undefined,
-        dateFrom: searchParams.get("dateFrom") || undefined,
-        dateTo: searchParams.get("dateTo") || undefined,
-      };
-    },
-    [searchParams],
-  );
+  const result = await getAdminOrders(adminFilters);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-orders-page", filters],
-    queryFn: () => getAdminOrders(filters),
-    staleTime: 1000 * 60 * 5,
-  });
-
-  if (data && !data.success) {
+  if (!result.success) {
     return (
       <AdminNotice tone="danger" title="Error Loading Orders">
-        {data.message}
+        {result.message}
       </AdminNotice>
     );
   }
 
-  return <OrderTable orders={data?.success ? data.data : []} isLoading={isLoading} />;
+  return <OrderTable orders={result.success ? result.data : []} isLoading={false} />;
 }

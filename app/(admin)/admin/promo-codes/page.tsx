@@ -2,8 +2,14 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminUI";
 import PromoCodeListContent from "@/components/admin/promo-codes/PromoCodeListContent";
+import AdminPromoCodeListSkeleton from "@/components/skeleton/AdminPromoCodeListSkeleton";
+import SuspenseWithSearchParams from "@/components/SuspenseWithSearchParams";
 
-export default function AdminPromoCodesPage() {
+export default function AdminPromoCodesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -19,7 +25,9 @@ export default function AdminPromoCodesPage() {
           </Link>
         }
       />
-      <PromoCodeListContent />
+      <SuspenseWithSearchParams fallback={<AdminPromoCodeListSkeleton />}>
+        <PromoCodeListContent searchParams={searchParams} />
+      </SuspenseWithSearchParams>
     </div>
   );
 }

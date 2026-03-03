@@ -24,8 +24,12 @@ export async function revalidateCategoryPaths(categoryId?: number | string) {
   }
 }
 
-export async function revalidatePromoPaths() {
+export async function revalidatePromoPaths(promoCodeId?: string | number) {
   updateTags([CACHE_TAGS.promoCodes]);
+
+  if (promoCodeId) {
+    updateTag(CACHE_TAGS.promoCode(promoCodeId));
+  }
 }
 
 export async function revalidateDeliveryPaths(deliveryId?: number | string) {
@@ -50,4 +54,16 @@ export async function revalidateUserPaths(userId?: string) {
   if (userId) {
     updateTag(CACHE_TAGS.user(userId));
   }
+}
+
+export async function revalidateAddressPaths(addressId?: number | string) {
+  updateTags([CACHE_TAGS.addresses]);
+
+  if (addressId) {
+    updateTag(CACHE_TAGS.address(addressId));
+  }
+}
+
+export async function revalidateAnalyticsPaths() {
+  updateTags([CACHE_TAGS.orders, CACHE_TAGS.users]);
 }

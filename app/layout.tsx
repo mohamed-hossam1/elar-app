@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { StateProvider } from "@/providers/state-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 import { satoshi, integralCF } from "@/lib/fonts";
-
-import QueryProvider from "@/providers/query-provider";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -32,21 +31,21 @@ export default function RootLayout({
       <body
         className={`${satoshi.variable} ${integralCF.variable} font-satoshi antialiased`}
       >
-        <Suspense fallback={<div className="min-h-screen" />}>
-          <QueryProvider>
-            <StateProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
+        <QueryProvider>
+          <StateProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Suspense fallback={<div className="min-h-screen" />}>
                 {children}
-                <Toaster />
-              </ThemeProvider>
-            </StateProvider>
-          </QueryProvider>
-        </Suspense>
+              </Suspense>
+              <Toaster />
+            </ThemeProvider>
+          </StateProvider>
+        </QueryProvider>
 
         <Analytics />
       </body>

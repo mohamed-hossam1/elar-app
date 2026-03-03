@@ -1,40 +1,31 @@
-"use client";
-
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
 import { getAdminUsers } from "@/lib/queries/users";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import UserTable from "@/components/admin/users/UserTable";
 import { AdminUserFilters, AdminRole } from "@/types/Admin";
 
-export default function UserListContent() {
-  const searchParams = useSearchParams();
+export default async function UserListContent({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const filters = await searchParams;
 
-  const filters: AdminUserFilters = useMemo(
-    () => ({
-      search: searchParams.get("search") || undefined,
-      role: searchParams.get("role") as AdminRole | undefined,
-      dateFrom: searchParams.get("dateFrom") || undefined,
-      dateTo: searchParams.get("dateTo") || undefined,
-    }),
-    [searchParams],
-  );
+  const adminFilters: AdminUserFilters = {
+    search: filters.search || undefined,
+    role: filters.role as AdminRole | undefined,
+    dateFrom: filters.dateFrom || undefined,
+    dateTo: filters.dateTo || undefined,
+  };
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-users-page", filters],
-    queryFn: () => getAdminUsers(filters),
-    staleTime: 1000 * 60 * 5,
-  });
+  const result = await getAdminUsers(adminFilters);
 
-  if (data && !data.success) {
+  if (!result.success) {
     return (
       <AdminNotice tone="danger" title="Error Loading Users">
-        {data.message}
+        {result.message}
       </AdminNotice>
     );
   }
 
-  return <UserTable users={data?.success ? data.data : []} isLoading={isLoading} />;
+  return <UserTable users={result.success ? result.data : []} isLoading={false} />;
 }

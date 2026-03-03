@@ -1,43 +1,34 @@
-"use client";
-
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
 import { getPromoCodes } from "@/lib/queries/promoCodes";
 import { AdminNotice } from "@/components/admin/AdminUI";
 import { PromoCodeTable } from "@/components/admin/promo-codes/PromoCodeTable";
 import { AdminPromoFilters, PromoStatusFilter } from "@/types/Admin";
 
-export default function PromoCodeListContent() {
-  const searchParams = useSearchParams();
+export default async function PromoCodeListContent({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const filters = await searchParams;
 
-  const filters: AdminPromoFilters = useMemo(
-    () => ({
-      search: searchParams.get("search") || undefined,
-      status: (searchParams.get("status") || "all") as PromoStatusFilter,
-    }),
-    [searchParams],
-  );
+  const adminFilters: AdminPromoFilters = {
+    search: filters.search || undefined,
+    status: (filters.status || "all") as PromoStatusFilter,
+  };
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-promo-codes-page", filters],
-    queryFn: () => getPromoCodes(filters),
-    staleTime: 1000 * 60 * 5,
-  });
+  const result = await getPromoCodes(adminFilters);
 
-  if (data && !data.success) {
+  if (!result.success) {
     return (
       <AdminNotice tone="danger" title="Error Loading Promo Codes">
-        {data.message}
+        {result.message}
       </AdminNotice>
     );
   }
 
   return (
     <PromoCodeTable
-      promoCodes={data?.success ? data.data : []}
-      isLoading={isLoading}
+      promoCodes={result.success ? result.data : []}
+      isLoading={false}
     />
   );
 }

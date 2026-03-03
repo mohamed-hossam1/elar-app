@@ -56,3 +56,24 @@ export async function updateCategory(
     data: data as Category,
   };
 }
+
+export async function deleteCategory(id: number): Promise<
+  | { success: true; message: string }
+  | { success: false; message: string }
+> {
+  const verification = await verifyAdmin();
+  if (!verification.success) return verification;
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("categories")
+    .delete()
+    .eq("id", id);
+
+  if (error) return { success: false, message: error.message };
+  revalidateCategoryPaths();
+  return {
+    success: true,
+    message: "Category deleted successfully.",
+  };
+}

@@ -23,7 +23,7 @@ export const useUserStore = create<UserStoreState>((set, get) => ({
     set({ isLoading: true });
 
     try {
-      const { GetUser } = await import("@/actions/userAction");
+      const { GetUser } = await import("@/lib/queries/users");
       const response = await GetUser();
       if (response.success && response.data) {
         set({ user: response.data });

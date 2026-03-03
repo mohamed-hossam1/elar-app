@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 import { Delivery } from "@/types/deliveryFee";
@@ -22,7 +22,6 @@ export function DeliveryTable({
   isLoading: boolean;
 }) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [isPending, startTransition] = useTransition();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,9 +33,6 @@ export function DeliveryTable({
       const res = await deleteDeliverySetting(deleteId);
       if (res.success) {
         setDeleteId(null);
-        await queryClient.invalidateQueries({
-          queryKey: ["admin-delivery-page"],
-        });
         router.refresh();
       } else {
         setError(res.message);

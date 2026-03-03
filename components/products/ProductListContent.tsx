@@ -1,51 +1,29 @@
-"use client";
-
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
-import { getProductListing, getProductPriceRange } from "@/lib/queries/products";
+import {
+  getProductListing,
+  getProductPriceRange,
+} from "@/lib/queries/products";
 import { getAllCategories } from "@/lib/queries/categories";
 import ProductListing from "@/components/products/ProductListing";
-import ShowProductsListSkeleton from "@/components/skeleton/ShowProductsListSkeleton";
 import { normalizeListingQuery } from "@/lib/products/listing";
 
-export default function ProductListContent() {
-  const searchParams = useSearchParams();
-
-  const query = useMemo(
-    () => normalizeListingQuery(Object.fromEntries(searchParams.entries())),
-    [searchParams],
-  );
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["products-page", query],
-    queryFn: async () => {
-      const [listingResponse, categoriesResponse, priceRangeResponse] =
-        await Promise.all([
-          getProductListing(query),
-          getAllCategories(),
-          getProductPriceRange(),
-        ]);
-
-      return {
-        listingResponse,
-        categoriesResponse,
-        priceRangeResponse,
-      };
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-
-  if (isLoading) {
-    return <ShowProductsListSkeleton />;
-  }
+export default async function ProductListContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ page: string }>;
+}) {
+  const params = await searchParams;
+  const query = normalizeListingQuery(params);
+  const [listingResponse, categoriesResponse, priceRangeResponse] =
+    await Promise.all([
+      getProductListing(query),
+      getAllCategories(),
+      getProductPriceRange(),
+    ]);
 
   if (
-    !data ||
-    !data.listingResponse.success ||
-    !data.categoriesResponse.success ||
-    !data.priceRangeResponse.success
+    !listingResponse.success ||
+    !categoriesResponse.success ||
+    !priceRangeResponse.success
   ) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center px-4 text-center">
@@ -60,9 +38,9 @@ export default function ProductListContent() {
     );
   }
 
-  const { data: products, total, pageCount } = data.listingResponse.data;
-  const categories = data.categoriesResponse.data;
-  const { min: catalogMin, max: catalogMax } = data.priceRangeResponse.data;
+  const { data: products, total, pageCount } = listingResponse.data;
+  const categories = categoriesResponse.data;
+  const { min: catalogMin, max: catalogMax } = priceRangeResponse.data;
 
   return (
     <ProductListing

@@ -1,3 +1,5 @@
+"use server"
+
 import { cacheLife, cacheTag } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CACHE_DURATION } from "@/lib/cache/cache-life";

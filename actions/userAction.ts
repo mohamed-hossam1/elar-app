@@ -46,6 +46,7 @@ export async function SignUpSupabase({
     return { success: false, message: addUserError.message };
   }
 
+  revalidateUserPaths(userId);
   return { success: true };
 }
 
@@ -121,6 +122,7 @@ export async function UpdateUserProfile({
     }
   }
 
+  revalidateUserPaths(userId);
   return { success: true };
 }
 

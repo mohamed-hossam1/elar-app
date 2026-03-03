@@ -1,3 +1,4 @@
+"use server"
 import { cacheLife, cacheTag } from "next/cache";
 import { verifyAdmin } from "@/actions/userAction";
 import { CACHE_DURATION } from "@/lib/cache/cache-life";

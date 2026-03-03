@@ -8,17 +8,23 @@ import Toast from "@/components/ui/Toast";
 import { egpFormatter } from "@/lib/format/currency";
 import { Minus, Plus } from "lucide-react";
 
-export default function QuantityProduct({ product }: { product: ProductDetails }) {
+export default function QuantityProduct({
+  product,
+}: {
+  product: ProductDetails;
+}) {
   const [toast, setToast] = useState<{
     show: boolean;
     message: string;
     type: "success" | "error";
+    position: "top-center";
   }>({
     show: false,
     message: "",
     type: "success",
+    position: "top-center",
   });
-  
+
   const variants = product.variants || [];
   const colors = Array.from(
     new Set(variants.map((v: ProductVariant) => v.color)),
@@ -100,6 +106,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
           show: true,
           message: res.message || "Failed to add to cart",
           type: "error",
+          position: "top-center",
         });
         return;
       }
@@ -108,6 +115,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
         show: true,
         message: "Product added to cart successfully",
         type: "success",
+        position: "top-center",
       });
 
       setQuantity(1);
@@ -116,6 +124,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
         show: true,
         message: e.message || "An unexpected error occurred",
         type: "error",
+        position: "top-center",
       });
     } finally {
       setIsLoading(false);
@@ -133,13 +142,21 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
               </span>
               {selectedVariant?.price_before && (
                 <span className="px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">
-                  -{(((Number(selectedVariant.price_before) - price) / Number(selectedVariant.price_before)) * 100).toFixed(0)}%
+                  -
+                  {(
+                    ((Number(selectedVariant.price_before) - price) /
+                      Number(selectedVariant.price_before)) *
+                    100
+                  ).toFixed(0)}
+                  %
                 </span>
               )}
             </div>
             {selectedVariant?.price_before && (
               <span className="text-lg text-black/60 line-through font-medium font-integral decoration-red-500/50">
-                {egpFormatter.format(Number(selectedVariant.price_before) * quantity)}
+                {egpFormatter.format(
+                  Number(selectedVariant.price_before) * quantity,
+                )}
               </span>
             )}
           </div>
@@ -181,10 +198,11 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
                       />
                     )}
                     {isColorOutOfStock && (
-                      <div 
+                      <div
                         className="absolute inset-0 pointer-events-none opacity-80"
                         style={{
-                          background: "linear-gradient(45deg, transparent 49%, white 49%, white 51%, transparent 51%)"
+                          background:
+                            "linear-gradient(45deg, transparent 49%, white 49%, white 51%, transparent 51%)",
                         }}
                       />
                     )}
@@ -202,9 +220,11 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
             </p>
             <div className="flex flex-wrap gap-3">
               {availableSizes.map((size) => {
-                const isSizeOutOfStock = variants.find(
-                  (v: ProductVariant) => v.color === selectedColor && v.size === size
-                )?.stock === 0;
+                const isSizeOutOfStock =
+                  variants.find(
+                    (v: ProductVariant) =>
+                      v.color === selectedColor && v.size === size,
+                  )?.stock === 0;
 
                 const lineColor = selectedSize === size ? "white" : "black";
 
@@ -220,7 +240,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
                   >
                     <span className="relative z-10">{size}</span>
                     {isSizeOutOfStock && (
-                      <div 
+                      <div
                         className="absolute inset-0 pointer-events-none z-20 "
                         style={{
                           background: `linear-gradient(to top left, transparent 49%, ${lineColor} 49%, ${lineColor} 51%, transparent 51%)`,
@@ -235,11 +255,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
         )}
       </div>
 
-      
-
-      
       <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-10 md:mb-10">
-        
         <div className="flex items-center justify-between border border-black px-6 py-4 bg-white sm:w-40 h-14">
           <button
             className="flex items-center justify-center hover:opacity-50 transition-opacity p-1 disabled:opacity-20 disabled:cursor-not-allowed"
@@ -262,7 +278,6 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
           </button>
         </div>
 
-        
         <button
           className={`hidden sm:flex flex-1 py-4 px-8 font-black text-sm uppercase tracking-[0.2em] transition-all justify-center items-center border border-black h-14 ${
             isOutOfStock
@@ -282,11 +297,12 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
         </button>
       </div>
 
-      
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-100 sm:hidden flex gap-4 items-center animate-in slide-in-from-bottom duration-300">
         {!isOutOfStock && (
           <div className="flex flex-col pr-2 border-r border-black/10 min-w-[100px]">
-            <span className="text-[10px] font-bold text-black/60 uppercase tracking-widest">Total</span>
+            <span className="text-[10px] font-bold text-black/60 uppercase tracking-widest">
+              Total
+            </span>
             <span className="text-lg font-black font-integral tracking-tighter leading-none">
               {egpFormatter.format(price * quantity)}
             </span>

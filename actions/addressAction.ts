@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { Address } from "@/types/Address";
-import { revalidatePath } from "next/cache";
+import { revalidateAddressPaths } from "@/lib/cache/revalidate";
 
 async function getAuthUser() {
   const supabase = await createClient();
@@ -33,7 +33,7 @@ export async function addAddress(
       .single();
 
     if (error) throw error;
-    revalidatePath("/profile/addresses");
+    revalidateAddressPaths(newAddress.id);
     return { success: true, data: newAddress as Address };
   } catch (error: any) {
     return {
@@ -82,7 +82,7 @@ export async function deleteAddress(
       .eq("user_id", user.id);
 
     if (error) throw error;
-    revalidatePath("/profile/addresses");
+    revalidateAddressPaths();
     return { success: true, message: "Address deleted successfully" };
   } catch (error: any) {
     return {
@@ -111,7 +111,7 @@ export async function updateAddress(
       .single();
 
     if (error) throw error;
-    revalidatePath("/profile/addresses");
+    revalidateAddressPaths(id);
     return { success: true, data: updated as Address };
   } catch (error: any) {
     return {

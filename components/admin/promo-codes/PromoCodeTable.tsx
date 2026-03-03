@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+
 import Link from "next/link";
 import { Search, Edit, Trash2 } from "lucide-react";
 import { PromoCode } from "@/types/PromoCode";
@@ -27,7 +27,6 @@ export function PromoCodeTable({
   isLoading: boolean;
 }) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -65,9 +64,7 @@ export function PromoCodeTable({
       const res = await deletePromoCode(deleteId);
       if (res.success) {
         setDeleteId(null);
-        await queryClient.invalidateQueries({
-          queryKey: ["admin-promo-codes-page"],
-        });
+        router.refresh();
       } else {
         setError(res.message);
       }

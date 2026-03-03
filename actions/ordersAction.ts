@@ -3,6 +3,7 @@ import { ADMIN_ORDER_STATUSES } from "@/lib/admin";
 import { isAdminOrderStatus } from "@/lib/admin";
 
 import {
+  revalidateCatalogPaths,
   revalidateOrderPaths,
   revalidatePromoPaths,
 } from "@/lib/cache/revalidate";
@@ -271,6 +272,7 @@ export async function createOrder(
       }
     }
 
+    revalidateCatalogPaths();
     revalidateOrderPaths(order.id);
     return { success: true, data: order as Order };
   } catch (err: any) {

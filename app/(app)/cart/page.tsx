@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import Cart from "@/components/cart/Cart";
+import CartSkeleton from "@/components/skeleton/CartSkeleton";
 import { Metadata } from "next";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
 import { getOgMetadata, getTwitterCardMetadata } from "@/lib/metadata/socialCards";
@@ -32,7 +34,9 @@ export default function CartPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
-      <Cart />
+      <Suspense fallback={<CartSkeleton />}>
+        <Cart />
+      </Suspense>
     </div>
   );
 }
