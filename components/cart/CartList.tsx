@@ -10,6 +10,7 @@ import { useUser } from "@/stores/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import * as motion from "motion/react-client";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { egpFormatter } from "@/lib/format/currency";
 
@@ -99,7 +100,12 @@ export default function CartList() {
   const hasItems = cartEntries.length > 0;
 
   return (
-    <div className="max-w-[1450px] px-3 md:px-5 m-auto mt-6 md:mt-12 mb-10 font-satoshi">
+    <motion.div
+      className="max-w-[1450px] px-3 md:px-5 m-auto mt-6 md:mt-12 mb-10 font-satoshi"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const }}
+    >
       <div className="mb-6 md:mb-10">
         <h1 className="text-2xl md:text-3xl font-bold uppercase font-integral">Shopping Cart</h1>
         <p className="text-sm md:text-base text-gray-600 mt-2 md:mt-3">
@@ -111,13 +117,14 @@ export default function CartList() {
         <div className="w-full lg:flex-4">
           <div className="flex flex-row justify-between items-center mb-4 md:mb-6 gap-3">
             <h2 className="text-lg md:text-xl font-bold">Cart Items</h2>
-            <button
+            <motion.button
               className="text-red-500 font-bold cursor-pointer hover:opacity-70 transition-opacity disabled:opacity-50 text-xs md:text-sm uppercase tracking-widest"
               onClick={handleClearCart}
               disabled={!hasItems}
+              whileTap={{ scale: 0.95 }}
             >
               Clear Cart
-            </button>
+            </motion.button>
           </div>
 
           {hasItems ? (
@@ -130,9 +137,16 @@ export default function CartList() {
                 const isOutOfStock = stock === 0;
 
                 return (
-                  <div
+                  <motion.div
                     key={variantId}
                     className="p-3 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b last:border-b-0 hover:bg-gray-50/50 transition-colors"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.05,
+                      ease: [0.25, 0.1, 0.25, 1] as const,
+                    }}
                   >
                     <div className="w-24 h-24 md:w-32 md:h-32 relative bg-white border border-black flex items-center justify-center shrink-0 overflow-hidden">
                       <Image
@@ -169,40 +183,50 @@ export default function CartList() {
                           </div>
                         </div>
 
-                        <button
+                        <motion.button
                           className="text-black/30 hover:text-red-500 transition-colors p-1 cursor-pointer shrink-0"
                           title="Remove item"
                           onClick={() => handleRemove(variantId)}
                           aria-label="Remove item"
+                          whileHover={{ scale: 1.15 }}
+                          whileTap={{ scale: 0.9 }}
                         >
                           <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
-                        </button>
+                        </motion.button>
                       </div>
 
                       <div className="flex flex-row items-center justify-between mt-4 md:mt-6 gap-3">
                         <div className="flex flex-col">
                           <div className="flex items-center border border-black px-4 py-2 space-x-4">
-                            <button
+                            <motion.button
                               className="text-gray-900 flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                               disabled={value.quantity <= 1}
                               onClick={() => handleUpdateQuantity(variantId, value.quantity, -1)}
                               aria-label="Decrease quantity"
+                              whileTap={{ scale: 0.9 }}
                             >
                               <Minus className="w-4 h-4" />
-                            </button>
+                            </motion.button>
 
-                            <span className="font-bold text-sm md:text-base text-gray-900 w-6 text-center select-none">
+                            <motion.span
+                              className="font-bold text-sm md:text-base text-gray-900 w-6 text-center select-none"
+                              key={`qty-${value.quantity}`}
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.15 }}
+                            >
                               {value.quantity}
-                            </span>
+                            </motion.span>
 
-                            <button
+                            <motion.button
                               className="text-gray-900 flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
                               onClick={() => handleUpdateQuantity(variantId, value.quantity, 1)}
                               disabled={isMaxQuantity || isOutOfStock}
                               aria-label="Increase quantity"
+                              whileTap={{ scale: 0.9 }}
                             >
                               <Plus className="w-4 h-4" />
-                            </button>
+                            </motion.button>
                           </div>
                           {(isMaxQuantity || isOutOfStock) && (
                             <p className="text-xs text-red-500 mt-2 font-medium">
@@ -223,28 +247,38 @@ export default function CartList() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
           ) : (
-            <div className="border border-black p-12 text-center bg-white">
+            <motion.div
+              className="border border-black p-12 text-center bg-white"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+            >
               <div className="w-20 h-20 bg-black flex items-center justify-center mx-auto mb-6">
                 <ShoppingBag className="w-10 h-10 text-white" />
               </div>
               <p className="text-gray-900 text-xl font-black mb-2 uppercase font-integral tracking-widest">Your cart is empty</p>
-              <p className="text-black/60 mb-8 max-w-xs mx-auto font-satoshi uppercase tracking-wider text-[10px] leading-relaxed">Looks like you haven't added anything to your cart yet.</p>
+              <p className="text-black/60 mb-8 max-w-xs mx-auto font-satoshi uppercase tracking-wider text-[10px] leading-relaxed">Looks like you haven&apos;t added anything to your cart yet.</p>
               <Link
                 href={ROUTES.PRODUCTS}
                 className="inline-block bg-black text-white px-8 py-4 font-bold border border-black hover:opacity-90 active:scale-[0.98] transition-all uppercase tracking-[0.2em] text-xs"
               >
                 Start Shopping
               </Link>
-            </div>
+            </motion.div>
           )}
 
           {hasItems && (
-            <div className="mt-8">
+            <motion.div
+              className="mt-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               <Link
                 href={ROUTES.PRODUCTS}
                 className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-black hover:opacity-60 transition-opacity"
@@ -252,12 +286,12 @@ export default function CartList() {
                 <ArrowLeft className="size-4" />
                 Continue Shopping
               </Link>
-            </div>
+            </motion.div>
           )}
         </div>
 
         <OrderSummary price={price} isCart={true} deliveryFee={0} />
       </div>
-    </div>
+    </motion.div>
   );
 }

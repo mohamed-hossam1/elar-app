@@ -8,6 +8,8 @@ import AddressStep from "./Address/AddressStep";
 import { getAddresses } from "@/actions/addressAction";
 import { getDeliveryFee } from "@/lib/queries/delivery";
 import { useQuery } from "@tanstack/react-query";
+import * as motion from "motion/react-client";
+import AnimatedSection from "@/components/home/AnimatedSection";
 
 import PaymentStep from "./Payment/PaymentStep";
 import { useRouter } from "next/navigation";
@@ -32,8 +34,8 @@ export default function CheckoutList() {
   } = useCart();
 
   const { user } = useUser();
-  const { 
-    data: addresses = [], 
+  const {
+    data: addresses = [],
     isLoading: isLoadingAddresses,
     refetch: refetchAddresses
   } = useQuery({
@@ -191,7 +193,7 @@ export default function CheckoutList() {
           total_price: total,
           delivery_fee: deliveryFee,
           payment_method: selectedPayment as string,
-          payment_image: paymentImage, 
+          payment_image: paymentImage,
           coupon_id: appliedPromo?.id,
           user_id: user?.id,
           guest_id: guestId,
@@ -229,47 +231,72 @@ export default function CheckoutList() {
 
   return (
     <div className="max-w-[1400px] px-4 sm:px-6 lg:px-8 m-auto mt-6 md:mt-12 mb-20 min-h-screen">
-      <div className="mb-8 md:mb-12">
-        <h1 className="text-3xl md:text-5xl font-integral font-black tracking-widest uppercase text-black">
-          Checkout
-        </h1>
-        {!user && (
-          <p className="text-[10px] md:text-xs text-black/60 mt-4 uppercase font-bold tracking-[0.2em] leading-relaxed">
-            Buying as guest? 
-            <a
-              href={ROUTES.SIGNIN}
-              className="text-black hover:opacity-60 transition-opacity ml-1.5 underline underline-offset-4"
+      <AnimatedSection>
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-5xl font-integral font-black tracking-widest uppercase text-black">
+            Checkout
+          </h1>
+          {!user && (
+            <motion.p
+              className="text-[10px] md:text-xs text-black/60 mt-4 uppercase font-bold tracking-[0.2em] leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
             >
-              Sign in
-            </a>{" "}
-            to sync your order history.
-          </p>
-        )}
-      </div>
+              Buying as guest?
+              <a
+                href={ROUTES.SIGNIN}
+                className="text-black hover:opacity-60 transition-opacity ml-1.5 underline underline-offset-4"
+              >
+                Sign in
+              </a>{" "}
+              to sync your order history.
+            </motion.p>
+          )}
+        </div>
+      </AnimatedSection>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-14">
         <div className="w-full lg:flex-[1.5] space-y-10">
           <section className="bg-white border border-black/10 overflow-hidden">
-            <button 
+            <motion.button
               onClick={() => setIsCartSummaryOpen(!isCartSummaryOpen)}
               className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-black/5 transition-colors"
+              whileTap={{ scale: 0.995 }}
             >
               <div className="flex items-center gap-3">
                 <ShoppingBag className="size-5" />
                 <span className="text-sm font-bold uppercase tracking-widest">Your Items ({Object.keys(cart || {}).length})</span>
               </div>
-              {isCartSummaryOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-            </button>
-            
+              <motion.div
+                animate={{ rotate: isCartSummaryOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown className="size-4" />
+              </motion.div>
+            </motion.button>
+
             {isCartSummaryOpen && (
-              <div className="border-t border-black/10 p-4 sm:p-6 space-y-4 max-h-[400px] overflow-y-auto">
-                {Object.entries(cart || {}).map(([key, item]) => (
-                  <div key={key} className="flex gap-4 items-center">
+              <motion.div
+                className="border-t border-black/10 p-4 sm:p-6 space-y-4 max-h-[400px] overflow-y-auto"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                {Object.entries(cart || {}).map(([key, item], i) => (
+                  <motion.div
+                    key={key}
+                    className="flex gap-4 items-center"
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                  >
                     <div className="size-16 relative border border-black/10 shrink-0">
-                      <Image 
-                        src={item.variant.product?.image_cover || ""} 
-                        alt={item.variant.product?.title || ""} 
-                        fill 
+                      <Image
+                        src={item.variant.product?.image_cover || ""}
+                        alt={item.variant.product?.title || ""}
+                        fill
                         className="object-contain"
                       />
                     </div>
@@ -280,55 +307,58 @@ export default function CheckoutList() {
                       </p>
                     </div>
                     <p className="text-xs font-bold shrink-0">EGP {item.variant.price * item.quantity}</p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </section>
 
-          <section>
-            <h2 className="text-xl md:text-2xl font-black uppercase font-integral tracking-tight mb-6 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-none border border-black bg-black text-white flex items-center justify-center text-sm font-bold">
-                1
-              </span>
-              Delivery Details
-            </h2>
-            <div className="border border-black rounded-none bg-white p-6 sm:p-8">
-              {user ? (
-                <AddressStep
-                  addresses={addresses}
-                  onAddressSelected={handleAddressSelected}
-                  onRefresh={refetchAddresses}
-                  selectedAddress={selectedAddress || null}
-                />
+          <AnimatedSection>
+            <section>
+              <h2 className="text-xl md:text-2xl font-black uppercase font-integral tracking-tight mb-6 flex items-center gap-3">
+                <span className="w-8 h-8 rounded-none border border-black bg-black text-white flex items-center justify-center text-sm font-bold">
+                  1
+                </span>
+                Delivery Details
+              </h2>
+              <div className="border border-black rounded-none bg-white p-6 sm:p-8">
+                {user ? (
+                  <AddressStep
+                    addresses={addresses}
+                    onAddressSelected={handleAddressSelected}
+                    onRefresh={refetchAddresses}
+                    selectedAddress={selectedAddress || null}
+                  />
+                ) : (
+                  <GuestAddressStep
+                    guestAddress={guestAddress}
+                    onAddressChange={handleGuestAddressChange}
+                  />
+                )}
+              </div>
+            </section>
+          </AnimatedSection>
 
-              ) : (
-                <GuestAddressStep
-                  guestAddress={guestAddress}
-                  onAddressChange={handleGuestAddressChange}
+          <AnimatedSection delay={0.1}>
+            <section>
+              <h2 className="text-xl md:text-2xl font-black uppercase font-integral tracking-tight mb-6 flex items-center gap-3">
+                <span className="w-8 h-8 rounded-none border border-black bg-black text-white flex items-center justify-center text-sm font-bold">
+                  2
+                </span>
+                Payment Method
+              </h2>
+              <div className="border border-black rounded-none bg-white p-6 sm:p-8">
+                <PaymentStep
+                  onSelectPayment={onSelectPayment}
+                  selectedPayment={selectedPayment}
+                  onVodafoneImageChange={setVodafoneImageUrl}
+                  onInstapayImageChange={setInstapayImageUrl}
+                  vodafoneNumber="01013429234"
+                  instapayLink="https://instapay.com"
                 />
-              )}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-xl md:text-2xl font-black uppercase font-integral tracking-tight mb-6 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-none border border-black bg-black text-white flex items-center justify-center text-sm font-bold">
-                2
-              </span>
-              Payment Method
-            </h2>
-            <div className="border border-black rounded-none bg-white p-6 sm:p-8">
-              <PaymentStep
-                onSelectPayment={onSelectPayment}
-                selectedPayment={selectedPayment}
-                onVodafoneImageChange={setVodafoneImageUrl}
-                onInstapayImageChange={setInstapayImageUrl}
-                vodafoneNumber="01013429234"
-                instapayLink="https://instapay.com"
-              />
-            </div>
-          </section>
+              </div>
+            </section>
+          </AnimatedSection>
         </div>
 
         <div className="w-full lg:flex-1">
@@ -342,10 +372,11 @@ export default function CheckoutList() {
             />
 
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-black sm:relative sm:p-0 sm:bg-transparent sm:border-none z-50">
-              <button
+              <motion.button
                 disabled={isPlacingOrder || isNextDisabled}
                 className="w-full py-4 z-50 bg-black text-white font-bold border border-black hover:bg-white hover:text-black transition-all uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-[0.98]"
                 onClick={handlePlaceOrder}
+                whileTap={!isPlacingOrder && !isNextDisabled ? { scale: 0.98 } : {}}
               >
                 {isPlacingOrder ? (
                   <>
@@ -355,7 +386,7 @@ export default function CheckoutList() {
                 ) : (
                   "Place Order"
                 )}
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>

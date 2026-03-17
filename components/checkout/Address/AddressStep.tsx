@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Address } from "@/types/Address";
 import SavedAddressList from "./SavedAddressList";
 import AddressForm from "./AddressForm";
+import * as motion from "motion/react-client";
 
 interface AddressStepProps {
   addresses: Address[];
@@ -40,7 +41,12 @@ export default function AddressStep({
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       {addresses.length !== 0 ? (
         <>
           <p className="text-sm font-bold text-black uppercase tracking-wider mb-2">
@@ -57,9 +63,11 @@ export default function AddressStep({
       ) : null}
 
       {!showForm && (
-        <button
+        <motion.button
           onClick={() => setShowForm(true)}
           className="w-full p-4 border border-black text-black font-semibold hover:bg-black hover:text-white transition-colors flex items-center justify-center text-sm md:text-base cursor-pointer rounded-none uppercase tracking-wider"
+          whileHover={{ scale: 1.005 }}
+          whileTap={{ scale: 0.995 }}
         >
           <svg
             className="w-4 h-4 md:w-5 md:h-5 mr-3"
@@ -75,15 +83,21 @@ export default function AddressStep({
             />
           </svg>
           Add New Address
-        </button>
+        </motion.button>
       )}
 
       {showForm && (
-        <AddressForm
-          onSuccess={handleAddSuccess}
-          onCancel={() => setShowForm(false)}
-        />
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <AddressForm
+            onSuccess={handleAddSuccess}
+            onCancel={() => setShowForm(false)}
+          />
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

@@ -6,11 +6,11 @@ import { egpFormatter } from "@/lib/format/currency";
 
 export default function OrderCard({ order }: { order: Order }) {
   return (
-    <div className="border border-black bg-white group hover:bg-gray-50/50 transition-all duration-300">
+    <div className="border border-black bg-white transition-all duration-500 hover:bg-gray-50/50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group">
       <div className="p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 border-b border-black pb-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-black flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 bg-black flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
               <Package className="w-6 h-6 text-white" />
             </div>
             <div>

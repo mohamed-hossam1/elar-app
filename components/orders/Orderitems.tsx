@@ -5,16 +5,19 @@ import Image from "@/components/imageKit/ImageOptimization";
 
 export default async function Orderitems({ order }: { order: Order }) {
   const items = (await getOrderItems(order.id)) || [];
-  
+
   if (items.length === 0) return null;
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item) => (
-          <div 
+        {items.map((item, index) => (
+          <div
             key={item.id}
-            className="flex items-center gap-4 p-4 border border-black/5 bg-gray-50/50"
+            className="flex items-center gap-4 p-4 border border-black/5 bg-gray-50/50 transition-all duration-300 hover:bg-gray-100/50"
+            style={{
+              animation: `fade-in-up 0.4s ease-out ${0.3 + index * 0.06}s both`,
+            }}
           >
             <div className="w-16 h-16 border border-black bg-white shrink-0 relative overflow-hidden">
               {item.product_image ? (
@@ -38,7 +41,7 @@ export default async function Orderitems({ order }: { order: Order }) {
                 <span className="text-xs text-black/50 uppercase tracking-widest font-medium">
                   {item.variant_size} /
                 </span>
-                <div 
+                <div
                   className="w-3 h-3 border border-black"
                   style={{ backgroundColor: item.variant_color }}
                   title={item.variant_color}
@@ -53,7 +56,7 @@ export default async function Orderitems({ order }: { order: Order }) {
           </div>
         ))}
       </div>
-      
+
       <div className="flex justify-end pt-4 border-t border-black/5">
         <OrderDetails order={order} items={items} />
       </div>

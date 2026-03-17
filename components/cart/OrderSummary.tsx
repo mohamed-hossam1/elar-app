@@ -5,6 +5,7 @@ import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/stores/cartStore";
+import * as motion from "motion/react-client";
 import { egpFormatter } from "@/lib/format/currency";
 import { Tag, ArrowRight, Loader2 } from "lucide-react";
 
@@ -106,44 +107,61 @@ export default function OrderSummary({
                   />
                 </div>
                 {appliedPromo ? (
-                  <button
+                  <motion.button
                     className="px-6 py-3 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors font-bold uppercase tracking-widest text-xs md:text-sm cursor-pointer"
                     onClick={handleRemovePromo}
+                    whileTap={{ scale: 0.95 }}
                   >
                     Remove
-                  </button>
+                  </motion.button>
                 ) : (
-                  <button
+                  <motion.button
                     disabled={!promoCode.trim() || isApplying}
                     className="px-8 py-3 bg-black text-white border border-black hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold uppercase tracking-widest text-xs md:text-sm cursor-pointer"
                     onClick={handleApplyPromo}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {isApplying ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
                       "Apply"
                     )}
-                  </button>
+                  </motion.button>
                 )}
               </div>
 
               {promoError && (
-                <p className="text-red-500 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-bold uppercase tracking-wider border border-red-500/20 p-2 bg-red-50 animate-in fade-in slide-in-from-top-1">
+                <motion.p
+                  className="text-red-500 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-bold uppercase tracking-wider border border-red-500/20 p-2 bg-red-50"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
                   {promoError}
-                </p>
+                </motion.p>
               )}
               {appliedPromo && isConditionMet && (
-                <p className="text-green-600 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-black uppercase tracking-wider border border-green-500/20 p-2 bg-green-50 animate-in fade-in slide-in-from-top-1">
+                <motion.p
+                  className="text-green-600 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-black uppercase tracking-wider border border-green-500/20 p-2 bg-green-50"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
                   {appliedPromo.type === "percentage"
                     ? `${Math.round(appliedPromo.value)}%`
                     : couponFormatter.format(appliedPromo.value)}{" "}
                   discount applied
-                </p>
+                </motion.p>
               )}
               {appliedPromo && !isConditionMet && (
-                <p className="text-red-500 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-bold uppercase tracking-wider border border-red-500/20 p-2 bg-red-50 animate-in fade-in slide-in-from-top-1">
+                <motion.p
+                  className="text-red-500 text-xs md:text-sm mt-3 flex items-center gap-1.5 font-bold uppercase tracking-wider border border-red-500/20 p-2 bg-red-50"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
                   {`Minimum purchase of ${couponFormatter.format(appliedPromo.min_purchase)} required.`}
-                </p>
+                </motion.p>
               )}
             </div>
           </div>
@@ -158,7 +176,12 @@ export default function OrderSummary({
           </div>
 
           {appliedPromo && isConditionMet && (
-            <div className="flex justify-between items-center">
+            <motion.div
+              className="flex justify-between items-center"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.25 }}
+            >
               <span className="text-base md:text-lg text-black/60">
                 Discount (
                 {appliedPromo.type === "percentage"
@@ -169,7 +192,7 @@ export default function OrderSummary({
               <span className="font-bold text-red-500 text-base md:text-lg">
                 -{egpFormatter.format(discountAmount)}
               </span>
-            </div>
+            </motion.div>
           )}
 
           <div className="flex justify-between items-center">

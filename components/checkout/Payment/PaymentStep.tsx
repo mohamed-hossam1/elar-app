@@ -1,11 +1,13 @@
 "use client";
 
-import  { useState } from "react";
+import { useState } from "react";
 import Cash from "./Cash";
 import VodafoneCash from "./VodafoneCash";
 import Instapay from "./Instapay";
 import { Check } from "lucide-react";
 import { Uploader } from "@/components/imageKit/Uploader";
+import { PaymentMethod } from "./PaymentMethod";
+import * as motion from "motion/react-client";
 
 type Props = {
   onSelectPayment: (p: string) => void;
@@ -43,65 +45,37 @@ export default function PaymentStep({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="p-4 bg-gray-100 border border-black flex items-start gap-3 rounded-none">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div
+        className="p-4 bg-gray-100 border border-black flex items-start gap-3 rounded-none"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
         <p className="text-sm font-medium text-black">
           Special gift: Pay using Vodafone Cash or Instapay and get a free gift!
         </p>
-      </div>
+      </motion.div>
 
       <div className="flex flex-col gap-4">
-        
-        <div
-          onClick={() => onSelectPayment(payments[0])}
-          className={`flex items-center justify-between p-4 border cursor-pointer transition-all rounded-none ${
-            selectedPayment === payments[0]
-              ? "border-black border-2 bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              : "border-gray-200 hover:border-black/50"
-          }`}
-        >
-          <div className="flex items-center flex-1 gap-3">
-            <div
-              className={`w-5 h-5 border flex items-center justify-center shrink-0 transition-colors ${
-                selectedPayment === payments[0]
-                  ? "border-black bg-black"
-                  : "border-black bg-white"
-              }`}
-            >
-              {selectedPayment === payments[0] && (
-                <div className="w-2.5 h-2.5 bg-white"></div>
-              )}
-            </div>
-            <Cash />
-          </div>
-        </div>
+        <PaymentMethod
+          label="Cash"
+          icon={<Cash />}
+          isSelected={selectedPayment === payments[0]}
+          onSelect={() => onSelectPayment(payments[0])}
+        />
 
-        
-        <div
-          onClick={() => onSelectPayment(payments[1])}
-          className={`flex items-center justify-between p-4 border cursor-pointer transition-all rounded-none ${
-            selectedPayment === payments[1]
-              ? "border-black border-2 bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              : "border-gray-200 hover:border-black/50"
-          }`}
+        <PaymentMethod
+          label="Vodafone Cash"
+          icon={<VodafoneCash />}
+          isSelected={selectedPayment === payments[1]}
+          onSelect={() => onSelectPayment(payments[1])}
         >
-          <div className="flex items-center flex-1 gap-3">
-            <div
-              className={`w-5 h-5 border flex items-center justify-center shrink-0 transition-colors ${
-                selectedPayment === payments[1]
-                  ? "border-black bg-black"
-                  : "border-black bg-white"
-              }`}
-            >
-              {selectedPayment === payments[1] && (
-                <div className="w-2.5 h-2.5 bg-white"></div>
-              )}
-            </div>
-            <VodafoneCash />
-          </div>
-        </div>
-
-        {selectedPayment === payments[1] && (
           <div className="mt-2 p-6 border border-black rounded-none bg-white space-y-6">
             <div className="space-y-2">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/50">
@@ -111,7 +85,7 @@ export default function PaymentStep({
                 <span className="font-integral text-xl font-black tracking-wider text-black">
                   {vodafoneNumber}
                 </span>
-                <button
+                <motion.button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -120,9 +94,20 @@ export default function PaymentStep({
                     setTimeout(() => setIsCopyed(false), 1500);
                   }}
                   className="text-[10px] font-black px-4 py-2 border border-black bg-white rounded-none hover:bg-black hover:text-white transition-colors cursor-pointer flex items-center gap-2 uppercase tracking-widest"
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {isCopyed ? <Check className="w-3.5 h-3.5" /> : "Copy"}
-                </button>
+                  {isCopyed ? (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="flex items-center gap-1"
+                    >
+                      <Check className="w-3.5 h-3.5" /> Copied
+                    </motion.span>
+                  ) : (
+                    "Copy"
+                  )}
+                </motion.button>
               </div>
             </div>
 
@@ -134,50 +119,31 @@ export default function PaymentStep({
               maxFiles={1}
             />
           </div>
-        )}
+        </PaymentMethod>
 
-        
-        <div
-          onClick={() => onSelectPayment(payments[2])}
-          className={`flex items-center justify-between p-4 border cursor-pointer transition-all rounded-none ${
-            selectedPayment === payments[2]
-              ? "border-black border-2 bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              : "border-gray-200 hover:border-black/50"
-          }`}
+        <PaymentMethod
+          label="Instapay"
+          icon={<Instapay />}
+          isSelected={selectedPayment === payments[2]}
+          onSelect={() => onSelectPayment(payments[2])}
         >
-          <div className="flex items-center flex-1 gap-3">
-            <div
-              className={`w-5 h-5 border flex items-center justify-center shrink-0 transition-colors ${
-                selectedPayment === payments[2]
-                  ? "border-black bg-black"
-                  : "border-black bg-white"
-              }`}
-            >
-              {selectedPayment === payments[2] && (
-                <div className="w-2.5 h-2.5 bg-white"></div>
-              )}
-            </div>
-            <Instapay />
-          </div>
-        </div>
-
-        {selectedPayment === payments[2] && (
           <div className="mt-2 p-6 border border-black rounded-none bg-white space-y-6">
             <div className="flex items-center justify-between">
               <p className="text-sm font-bold text-black uppercase tracking-tight">
                 Pay using Instapay
               </p>
               {instapayLink && (
-                <button
+                <motion.button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(instapayLink, "_blank", "noopener,noreferrer");
                   }}
                   className="text-[10px] font-black bg-black text-white px-4 py-2 rounded-none hover:bg-white hover:text-black border border-black transition-colors uppercase tracking-[0.2em]"
+                  whileTap={{ scale: 0.95 }}
                 >
                   Open App
-                </button>
+                </motion.button>
               )}
             </div>
 
@@ -189,8 +155,8 @@ export default function PaymentStep({
               maxFiles={1}
             />
           </div>
-        )}
+        </PaymentMethod>
       </div>
-    </div>
+    </motion.div>
   );
 }

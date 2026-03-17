@@ -102,6 +102,13 @@ html {
 @theme {
   --animate-wiggle: wiggle 1s ease-in-out infinite;
   --animate-spin-slow: spin 10s linear infinite;
+  --animate-shimmer: shimmer 2.5s ease-in-out infinite;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-gradient-shift: gradient-shift 8s ease infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 0.7s ease-out both;
+
   @keyframes wiggle {
     0%,
     100% {
@@ -110,6 +117,40 @@ html {
     50% {
       transform: rotate(10deg);
     }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes float {
+    0%,
+    100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-12px) rotate(1deg); }
+    66% { transform: translateY(-6px) rotate(-1deg); }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 }
 

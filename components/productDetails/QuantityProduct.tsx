@@ -7,6 +7,7 @@ import { ProductDetails, ProductVariant } from "@/types/Product";
 import Toast from "@/components/ui/Toast";
 import { egpFormatter } from "@/lib/format/currency";
 import { Minus, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function QuantityProduct({
   product,
@@ -56,24 +57,25 @@ export default function QuantityProduct({
   const [selectedSize, setSelectedSize] = useState<string>(initialSize);
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [priceChanged, setPriceChanged] = useState(0);
   const { addToCart } = useCart();
-  const router = useRouter();
 
   const availableSizes = getSortedSizesForColor(selectedColor);
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
     const sortedSizes = getSortedSizesForColor(color);
-
     if (!sortedSizes.includes(selectedSize)) {
       setSelectedSize(sortedSizes[0]);
     }
     setQuantity(1);
+    setPriceChanged((prev) => prev + 1);
   };
 
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
     setQuantity(1);
+    setPriceChanged((prev) => prev + 1);
   };
 
   const selectedVariant = variants.find(
@@ -136,10 +138,19 @@ export default function QuantityProduct({
       <div className="space-y-8 mb-10">
         {!isOutOfStock && (
           <div className="flex flex-col gap-1 mb-4">
-            <div className="flex items-center gap-4">
-              <span className="text-3xl font-black tracking-tighter font-integral">
-                {egpFormatter.format(price * quantity)}
-              </span>
+            <div className="flex items-center gap-4 overflow-hidden">
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={`price-${priceChanged}-${price}`}
+                  className="text-3xl font-black tracking-tighter font-integral block"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                >
+                  {egpFormatter.format(price * quantity)}
+                </motion.span>
+              </AnimatePresence>
               {selectedVariant?.price_before && (
                 <span className="px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">
                   -
@@ -165,7 +176,11 @@ export default function QuantityProduct({
         <div className="h-px bg-gray-100 w-full" />
 
         {colors.length > 0 && (
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
             <p className="text-black/60 mb-4 font-bold uppercase text-xs tracking-[0.15em]">
               Select Color
             </p>
@@ -176,19 +191,22 @@ export default function QuantityProduct({
                   .every((v: ProductVariant) => v.stock === 0);
 
                 return (
-                  <button
+                  <motion.button
                     key={color}
                     onClick={() => handleColorChange(color)}
                     title={isColorOutOfStock ? `${color} - Sold Out` : color}
                     className={`relative w-10 h-10 border border-black transition-all flex items-center justify-center ${
                       selectedColor === color
-                        ? "ring-2 ring-black ring-offset-2"
+                        ? "ring-2 ring-black ring-offset-2 scale-110"
                         : "hover:scale-105"
                     } ${isColorOutOfStock ? "opacity-40 grayscale" : ""}`}
                     style={{ backgroundColor: color }}
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.9 }}
                   >
                     {selectedColor === color && (
-                      <div
+                      <motion.div
+                        layoutId="colorCheck"
                         className={`w-3 h-3 ${
                           color.toLowerCase() === "#ffffff" ||
                           color.toLowerCase() === "white"
@@ -206,15 +224,20 @@ export default function QuantityProduct({
                         }}
                       />
                     )}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {availableSizes.length > 0 && (
-          <div className="pt-2">
+          <motion.div
+            className="pt-2"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
             <p className="text-black/60 mb-4 font-bold uppercase text-xs tracking-[0.15em]">
               Choose Size
             </p>
@@ -229,7 +252,7 @@ export default function QuantityProduct({
                 const lineColor = selectedSize === size ? "white" : "black";
 
                 return (
-                  <button
+                  <motion.button
                     key={size}
                     onClick={() => handleSizeChange(size)}
                     className={`relative px-5 md:px-8 py-3 border border-black transition-all font-bold text-xs uppercase tracking-widest overflow-hidden ${
@@ -237,6 +260,8 @@ export default function QuantityProduct({
                         ? "bg-black text-white"
                         : "bg-white text-black hover:bg-gray-50"
                     } ${isSizeOutOfStock ? "opacity-60" : ""}`}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <span className="relative z-10">{size}</span>
                     {isSizeOutOfStock && (
@@ -247,16 +272,21 @@ export default function QuantityProduct({
                         }}
                       />
                     )}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-10 md:mb-10">
-        <div className="flex items-center justify-between border border-black px-6 py-4 bg-white sm:w-40 h-14">
+        <motion.div
+          className="flex items-center justify-between border border-black px-6 py-4 bg-white sm:w-40 h-14"
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <button
             className="flex items-center justify-center hover:opacity-50 transition-opacity p-1 disabled:opacity-20 disabled:cursor-not-allowed"
             onClick={() => quantity > 1 && setQuantity(quantity - 1)}
@@ -276,9 +306,9 @@ export default function QuantityProduct({
           >
             <Plus className="size-5" strokeWidth={2.5} />
           </button>
-        </div>
+        </motion.div>
 
-        <button
+        <motion.button
           className={`hidden sm:flex flex-1 py-4 px-8 font-black text-sm uppercase tracking-[0.2em] transition-all justify-center items-center border border-black h-14 ${
             isOutOfStock
               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -286,15 +316,24 @@ export default function QuantityProduct({
           }`}
           onClick={onSubmit}
           disabled={isLoading || isOutOfStock}
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
+          whileHover={!isOutOfStock ? { scale: 1.01 } : {}}
+          whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
         >
           {isLoading ? (
-            <div className="h-6 w-6 border-2 border-black/30 border-t-black animate-spin"></div>
+            <motion.div
+              className="h-6 w-6 border-2 border-black/30 border-t-black"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+            />
           ) : isOutOfStock ? (
             "Sold Out"
           ) : (
             "Add to Cart"
           )}
-        </button>
+        </motion.button>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-100 sm:hidden flex gap-4 items-center animate-in slide-in-from-bottom duration-300">

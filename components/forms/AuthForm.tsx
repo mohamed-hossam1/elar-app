@@ -14,6 +14,7 @@ import { SignInSupabase, SignUpSupabase } from "@/actions/userAction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/stores/userStore";
 import { useCart } from "@/stores/cartStore";
+import * as motion from "motion/react-client";
 
 interface AuthFormProps {
   fromType: string;
@@ -99,19 +100,34 @@ export default function AuthForm({ fromType }: AuthFormProps) {
   });
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <motion.div
+      className="w-full max-w-sm mx-auto"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] as const }}
+    >
       <form className="space-y-4 w-full" onSubmit={formik.handleSubmit}>
         {apiError && (
-          <div className="text-red-600 bg-red-50 border border-red-100 px-4 py-3 text-center text-sm font-medium">
+          <motion.div
+            className="text-red-600 bg-red-50 border border-red-100 px-4 py-3 text-center text-sm font-medium"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
             {apiError}
-          </div>
+          </motion.div>
         )}
 
         {fromType === "Sign Up" && (
-          <div className="relative">
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.35 }}
+          >
             <input
               id="name"
-              className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
+              className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
                 formik.touched.name && formik.errors.name
                   ? "ring-2 ring-red-500/20 bg-red-50/50"
                   : ""
@@ -128,13 +144,18 @@ export default function AuthForm({ fromType }: AuthFormProps) {
                 {formik.errors.name}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
 
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.35 }}
+        >
           <input
             id="email"
-            className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
+            className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
               formik.touched.email && formik.errors.email
                 ? "ring-2 ring-red-500/20 bg-red-50/50"
                 : ""
@@ -151,12 +172,17 @@ export default function AuthForm({ fromType }: AuthFormProps) {
               {formik.errors.email}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.35 }}
+        >
           <input
             id="password"
-            className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
+            className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
               formik.touched.password && formik.errors.password
                 ? "ring-2 ring-red-500/20 bg-red-50/50"
                 : ""
@@ -170,25 +196,31 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          <button
+          <motion.button
             type="button"
             onClick={togglePasswordVisibility}
             className="absolute right-6 top-1/2 -translate-y-1/2 text-black/20 hover:text-black transition-colors"
+            whileTap={{ scale: 0.9 }}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+          </motion.button>
           {formik.touched.password && formik.errors.password && (
             <div className="text-red-500 text-[10px] font-bold uppercase tracking-wider mt-1.5 px-6">
               {formik.errors.password}
             </div>
           )}
-        </div>
+        </motion.div>
 
         {fromType === "Sign Up" && (
-          <div className="relative">
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.35 }}
+          >
             <input
               id="phone"
-              className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
+              className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
                 formik.touched.phone && formik.errors.phone
                   ? "ring-2 ring-red-500/20 bg-red-50/50"
                   : ""
@@ -205,27 +237,38 @@ export default function AuthForm({ fromType }: AuthFormProps) {
                 {formik.errors.phone}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
 
         <div className="pt-2">
-          <button
+          <motion.button
             type="submit"
             disabled={isPending}
-            className={`w-full bg-black text-white py-4 px-4  font-satoshi font-bold text-base hover:bg-black/90 active:scale-[0.98] transition-all flex justify-center items-center ${
+            className={`w-full bg-black text-white py-4 px-4 font-satoshi font-bold text-base hover:bg-black/90 active:scale-[0.98] transition-all flex justify-center items-center ${
               isPending ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
             }`}
+            whileTap={!isPending ? { scale: 0.98 } : {}}
           >
             {isPending ? (
-              <Loader2Icon className="size-6 animate-spin" />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Loader2Icon className="size-6" />
+              </motion.div>
             ) : (
               `${fromType === "Sign Up" ? "Sign Up" : "Sign In"}`
             )}
-          </button>
+          </motion.button>
         </div>
       </form>
 
-      <div className="mt-4 text-center">
+      <motion.div
+        className="mt-4 text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.3 }}
+      >
         <p className="text-xs font-medium text-black/40">
           {fromType === "Sign Up"
             ? "Already have an account? "
@@ -237,7 +280,7 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             {fromType === "Sign Up" ? "Sign In" : "Sign Up"}
           </Link>
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

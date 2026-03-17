@@ -171,10 +171,13 @@ export default function ProductResultsHeader({
 
       {activeFilters.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          {activeFilters.map((filter) => (
+          {activeFilters.map((filter, i) => (
             <div
               key={filter.key}
               className="flex items-center gap-2 px-3 py-1.5 border border-black text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black hover:bg-black/5 transition-all rounded-none"
+              style={{
+                animation: `fade-in-up 0.4s ease-out ${i * 0.06}s both`,
+              }}
             >
               <span>{filter.label}</span>
               <button

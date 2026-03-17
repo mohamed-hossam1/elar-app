@@ -6,6 +6,7 @@ import ProductPagination from "./ProductPagination";
 import ProductFiltersSidebar from "./ProductFiltersSidebar";
 import ProductEmptyState from "./ProductEmptyState";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import AnimatedSection from "@/components/home/AnimatedSection";
 import { ProductListItem, ProductListingQuery } from "@/types/Product";
 import { Category } from "@/types/Category";
 
@@ -18,7 +19,6 @@ interface ProductListingProps {
   catalogMin: number;
   catalogMax: number;
 }
-
 
 export default function ProductListing({
   query,
@@ -34,17 +34,19 @@ export default function ProductListing({
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <Breadcrumbs 
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Shop" }
-        ]} 
-      />
+      <AnimatedSection>
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Shop" }
+          ]}
+        />
+      </AnimatedSection>
+
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-        
         <aside className="hidden lg:block w-72 shrink-0">
           <div className="sticky top-24 border border-black p-5 sm:p-6">
-            <ProductFiltersSidebar 
+            <ProductFiltersSidebar
               categories={categories}
               minPrice={catalogMin}
               maxPrice={catalogMax}
@@ -52,21 +54,20 @@ export default function ProductListing({
           </div>
         </aside>
 
-        
         <main className="flex-1 min-w-0">
-          
-          <div className="mb-6 sm:mb-8">
-            <ProductListingClient 
-              total={total}
-              currentSort={query.sort}
-              categories={categories}
-              categoryName={categoryName}
-              minPrice={catalogMin}
-              maxPrice={catalogMax}
-            />
-          </div>
+          <AnimatedSection delay={0.1}>
+            <div className="mb-6 sm:mb-8">
+              <ProductListingClient
+                total={total}
+                currentSort={query.sort}
+                categories={categories}
+                categoryName={categoryName}
+                minPrice={catalogMin}
+                maxPrice={catalogMax}
+              />
+            </div>
+          </AnimatedSection>
 
-          
           <div className="min-h-[400px]">
             {products.length > 0 ? (
               <ProductGrid products={products} />
@@ -75,13 +76,14 @@ export default function ProductListing({
             )}
           </div>
 
-          
-          <div className="mt-12 sm:mt-16 border-t border-black pt-6">
-            <ProductPagination 
-              currentPage={query.page} 
-              pageCount={pageCount} 
-            />
-          </div>
+          <AnimatedSection delay={0.2}>
+            <div className="mt-12 sm:mt-16 border-t border-black pt-6">
+              <ProductPagination
+                currentPage={query.page}
+                pageCount={pageCount}
+              />
+            </div>
+          </AnimatedSection>
         </main>
       </div>
     </div>

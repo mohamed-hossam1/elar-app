@@ -1,7 +1,8 @@
 "use client";
 
 import { Star, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import AnimatedSection from "./AnimatedSection";
 
 const REVIEWS = [
   {
@@ -36,22 +37,26 @@ const REVIEWS = [
   },
 ];
 
+const DOUBLE_REVIEWS = [...REVIEWS, ...REVIEWS];
+const AUTO_SCROLL_INTERVAL = 4000;
+
 export default function Reviews() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prefersReducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const updateScrollButtons = () => {
+  const updateScrollButtons = useCallback(() => {
     if (!scrollRef.current) return;
-
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     const maxScrollLeft = scrollWidth - clientWidth;
     setCanScrollLeft(scrollLeft > 4);
     setCanScrollRight(scrollLeft < maxScrollLeft - 4);
-  };
+  }, []);
 
   useEffect(() => {
     updateScrollButtons();
@@ -60,19 +65,44 @@ export default function Reviews() {
 
     scroller.addEventListener("scroll", updateScrollButtons, { passive: true });
     window.addEventListener("resize", updateScrollButtons);
-
     return () => {
       scroller.removeEventListener("scroll", updateScrollButtons);
       window.removeEventListener("resize", updateScrollButtons);
     };
-  }, []);
+  }, [updateScrollButtons]);
+
+  useEffect(() => {
+    if (!isAutoPlaying || prefersReducedMotion) return;
+
+    autoPlayRef.current = setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+
+      if (scrollLeft + clientWidth >= scrollWidth - 20) {
+        scrollRef.current.scrollTo({
+          left: 0,
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+        });
+      } else {
+        scrollRef.current.scrollBy({
+          left: clientWidth,
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+        });
+      }
+    }, AUTO_SCROLL_INTERVAL);
+
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, [isAutoPlaying, prefersReducedMotion]);
 
   const scroll = (direction: "left" | "right") => {
+    setIsAutoPlaying(false);
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
       const scrollTo =
         direction === "left"
-          ? scrollLeft - clientWidth
+          ? Math.max(0, scrollLeft - clientWidth)
           : scrollLeft + clientWidth;
       scrollRef.current.scrollTo({
         left: scrollTo,
@@ -82,64 +112,73 @@ export default function Reviews() {
     }
   };
 
+  const handleMouseEnter = () => setIsAutoPlaying(false);
+  const handleMouseLeave = () => setIsAutoPlaying(true);
+
   return (
     <section className="w-full py-12 sm:py-20 bg-white overflow-hidden mb-10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-8 sm:mb-12">
-          <h2 className="text-3xl sm:text-5xl font-integral font-black tracking-[0.04em] uppercase leading-[1.02] max-w-[16ch]">
-            OUR HAPPY CUSTOMERS
-          </h2>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className="p-2.5 border border-black rounded-none hover:bg-black/5 active:bg-black active:text-white transition-colors disabled:opacity-35 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:active:text-current disabled:cursor-not-allowed"
-              aria-label="Previous review"
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className="p-2.5 border border-black rounded-none hover:bg-black/5 active:bg-black active:text-white transition-colors disabled:opacity-35 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:active:text-current disabled:cursor-not-allowed"
-              aria-label="Next review"
-            >
-              <ArrowRight className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        <div
-          ref={scrollRef}
-          className="flex gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory"
-        >
-          {REVIEWS.map((review) => (
-            <div
-              key={review.id}
-              className="min-w-full sm:min-w-[400px] bg-white border border-black rounded-none p-6 sm:p-8 flex flex-col gap-3 sm:gap-4 snap-start"
-            >
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-5 h-5 ${i < review.rating ? "fill-[#FFC633] text-[#FFC633]" : "text-black/10"}`}
-                  />
-                ))}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl font-bold font-satoshi">
-                  {review.name}
-                </span>
-                <CheckCircle2 className="w-5 h-5 fill-[#01AB31] text-white" />
-              </div>
-
-              <p className="text-black/70 font-satoshi text-sm sm:text-base leading-relaxed">
-                &quot;{review.text}&quot;
-              </p>
+        <AnimatedSection>
+          <div className="flex items-end justify-between mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-5xl font-integral font-black tracking-[0.04em] uppercase leading-[1.02] max-w-[16ch]">
+              OUR HAPPY CUSTOMERS
+            </h2>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => scroll("left")}
+                disabled={!canScrollLeft}
+                className="p-2.5 border border-black rounded-none hover:bg-black/5 active:bg-black active:text-white transition-colors disabled:opacity-35 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:active:text-current disabled:cursor-not-allowed"
+                aria-label="Previous review"
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => scroll("right")}
+                disabled={!canScrollRight}
+                className="p-2.5 border border-black rounded-none hover:bg-black/5 active:bg-black active:text-white transition-colors disabled:opacity-35 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:active:text-current disabled:cursor-not-allowed"
+                aria-label="Next review"
+              >
+                <ArrowRight className="w-6 h-6" />
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.1}>
+          <div
+            ref={scrollRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="flex gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory"
+          >
+            {DOUBLE_REVIEWS.map((review, index) => (
+              <div
+                key={`${review.id}-${index}`}
+                className="min-w-full sm:min-w-[400px] bg-white border border-black rounded-none p-6 sm:p-8 flex flex-col gap-3 sm:gap-4 snap-start"
+              >
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-5 h-5 ${i < review.rating ? "fill-[#FFC633] text-[#FFC633]" : "text-black/10"}`}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-lg sm:text-xl font-bold font-satoshi">
+                    {review.name}
+                  </span>
+                  <CheckCircle2 className="w-5 h-5 fill-[#01AB31] text-white" />
+                </div>
+
+                <p className="text-black/70 font-satoshi text-sm sm:text-base leading-relaxed">
+                  &quot;{review.text}&quot;
+                </p>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

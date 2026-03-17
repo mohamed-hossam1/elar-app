@@ -210,7 +210,13 @@ export const getProductListing = async (
       break;
     case "newest":
     default:
-      baseQuery = baseQuery.order("created_at", { ascending: false });
+      if (categoryId !== undefined) {
+        baseQuery = baseQuery
+          .order("category_rank", { ascending: true, nullsFirst: false })
+          .order("created_at", { ascending: false });
+      } else {
+        baseQuery = baseQuery.order("created_at", { ascending: false });
+      }
       break;
   }
 
