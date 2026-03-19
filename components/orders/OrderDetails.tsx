@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Order, OrderItem } from "@/types/Order";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 import { X, MapPin, CreditCard, Info, ChevronRight } from "lucide-react";
 import Image from "@/components/imageKit/ImageOptimization";
 

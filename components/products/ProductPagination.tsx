@@ -1,7 +1,9 @@
+"use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { serializeListingQuery, normalizeListingQuery } from "@/lib/products/listing";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import * as motion from "motion/react-client"
+import { motion } from "motion/react"
 
 interface ProductPaginationProps {
   currentPage: number;

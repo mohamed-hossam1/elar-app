@@ -10,7 +10,7 @@ import { useUser } from "@/stores/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { egpFormatter } from "@/lib/format/currency";
 

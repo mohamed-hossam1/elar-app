@@ -43,10 +43,7 @@ export default function ProductSection({
                 ease: [0.25, 0.1, 0.25, 1] as const,
               }}
             >
-              <ProductCard
-                product={product}
-                priority={priority && index < 4}
-              />
+              <ProductCard product={product} priority={priority && index < 4} />
             </motion.div>
           ))}
         </div>

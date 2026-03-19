@@ -8,7 +8,7 @@ import AddressStep from "./Address/AddressStep";
 import { getAddresses } from "@/actions/addressAction";
 import { getDeliveryFee } from "@/lib/queries/delivery";
 import { useQuery } from "@tanstack/react-query";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 import AnimatedSection from "@/components/home/AnimatedSection";
 
 import PaymentStep from "./Payment/PaymentStep";

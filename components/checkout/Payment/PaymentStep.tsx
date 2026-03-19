@@ -7,7 +7,7 @@ import Instapay from "./Instapay";
 import { Check } from "lucide-react";
 import { Uploader } from "@/components/imageKit/Uploader";
 import { PaymentMethod } from "./PaymentMethod";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 
 type Props = {
   onSelectPayment: (p: string) => void;

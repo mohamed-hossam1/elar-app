@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Address } from "@/types/Address";
 import SavedAddressList from "./SavedAddressList";
 import AddressForm from "./AddressForm";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 
 interface AddressStepProps {
   addresses: Address[];

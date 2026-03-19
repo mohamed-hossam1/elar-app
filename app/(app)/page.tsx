@@ -33,6 +33,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
+      <link rel="preload" href="/hero_image.webp" as="image" fetchPriority="high" />
       <Hero />
 
       <Suspense fallback={<ProductSectionSkeleton title="NEW ARRIVALS" />}>

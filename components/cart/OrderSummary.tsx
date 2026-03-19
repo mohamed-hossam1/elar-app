@@ -5,7 +5,7 @@ import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/stores/cartStore";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react";
 import { egpFormatter } from "@/lib/format/currency";
 import { Tag, ArrowRight, Loader2 } from "lucide-react";
 

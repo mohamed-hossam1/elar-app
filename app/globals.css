@@ -130,9 +130,8 @@ html {
   }
 
   @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
   }
 
   @keyframes float {
@@ -152,6 +151,54 @@ html {
     0% { opacity: 0; transform: translateY(24px); }
     100% { opacity: 1; transform: translateY(0); }
   }
+
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes hero-float-1 {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-14px) rotate(-8deg); }
+  }
+  @keyframes hero-float-2 {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-10px) rotate(5deg); }
+  }
+  @keyframes hero-float-3 {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-8px) rotate(-10deg); }
+  }
+}
+
+.animate-hero-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-hero-scale-in {
+  opacity: 0;
+  animation: scale-in 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.3s both;
+}
+
+.animate-hero-float-1 {
+  animation: hero-float-1 6s ease-in-out 1s infinite;
+}
+.animate-hero-float-2 {
+  animation: hero-float-2 5s ease-in-out infinite;
+}
+.animate-hero-float-3 {
+  animation: hero-float-3 4s ease-in-out 0.5s infinite;
+}
+
+.hero-delay-1 { animation-delay: 0.1s; }
+.hero-delay-2 { animation-delay: 0.22s; }
+.hero-delay-3 { animation-delay: 0.34s; }
+.hero-delay-4 { animation-delay: 0.46s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 
