@@ -99,3 +99,86 @@ export async function GetUser(): Promise<
   }
   return { success: false, message: "User not authenticated" };
 }
+
+export async function UpdateUserProfile({
+  name,
+  email,
+  phone,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+}): Promise<{ success: true } | { success: false; message: string }> {
+  const supabase = await createClient();
+  const { data: authUser, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !authUser.user) {
+    return { success: false, message: "User not authenticated" };
+  }
+
+  const userId = authUser.user.id;
+
+  const { error: userTableError } = await supabase
+    .from("users")
+    .update({ name, phone })
+    .eq("id", userId);
+
+  if (userTableError) {
+    return { success: false, message: "Failed to update profile details" };
+  }
+
+  if (email !== authUser.user.email) {
+    const { error: authUpdateError } = await supabase.auth.updateUser({
+      email: email,
+    });
+
+    if (authUpdateError) {
+      return { success: false, message: "Failed to update email address" };
+    }
+  }
+
+  return { success: true };
+}
+
+export async function UpdateUserPassword({
+  oldPassword,
+  newPassword,
+}: {
+  oldPassword: string;
+  newPassword: string;
+}): Promise<{ success: true } | { success: false; message: string }> {
+  const supabase = await createClient();
+
+  const { data: authUser, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !authUser.user) {
+    return { success: false, message: "User not authenticated" };
+  }
+
+  const email = authUser.user.email;
+
+  if (!email) {
+    return { success: false, message: "User email not found in session." };
+  }
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: oldPassword,
+  });
+
+  if (signInError) {
+    return { success: false, message: "Incorrect old password." };
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (updateError) {
+    return { success: false, message: updateError.message };
+  }
+
+  await supabase.auth.signOut();
+
+  return { success: true };
+}

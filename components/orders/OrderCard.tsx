@@ -5,8 +5,6 @@ import { Package, Calendar, Tag } from "lucide-react";
 import { egpFormatter } from "@/lib/format/currency";
 
 export default function OrderCard({ order }: { order: Order }) {
-  const currentStatus = order.status?.toLowerCase();
-
   return (
     <div className="border border-black bg-white group hover:bg-gray-50/50 transition-all duration-300">
       <div className="p-6 sm:p-8">
@@ -57,7 +55,6 @@ export default function OrderCard({ order }: { order: Order }) {
         <div className="mb-8">
           <Orderitems order={order} />
         </div>
-
       </div>
     </div>
   );

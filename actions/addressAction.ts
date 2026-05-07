@@ -91,3 +91,32 @@ export async function deleteAddress(
     };
   }
 }
+
+export async function updateAddress(
+  id: number,
+  data: Partial<Omit<Address, "id" | "user_id">>,
+): Promise<
+  { success: true; data: Address } | { success: false; message: string }
+> {
+  try {
+    const supabase = await createClient();
+    const user = await getAuthUser();
+
+    const { data: updated, error } = await supabase
+      .from("addresses")
+      .update(data)
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    revalidatePath("/profile/addresses");
+    return { success: true, data: updated as Address };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to update address",
+    };
+  }
+}
