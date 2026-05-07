@@ -317,3 +317,24 @@ export async function getOrderById(
 
   return { success: true, data: order as Order };
 }
+
+export async function getUserOrders(): Promise<Order[]> {
+  const { supabase, userId, guestId } = await getCurrentOrderScope();
+
+  if (!userId && !guestId) return [];
+
+  let query = supabase.from("orders").select(`
+    *,
+    items:order_items (*, variant:product_variants(stock))
+  `).order("created_at", { ascending: false });
+
+  if (userId) {
+    query = query.eq("user_id", userId);
+  } else {
+    query = query.eq("guest_id", guestId).is("user_id", null);
+  }
+
+  const { data, error } = await query;
+  if (error) return [];
+  return data as Order[];
+}
