@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { StateProvider } from "@/providers/state-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
+import { satoshi, integralCF } from "@/lib/fonts";
 
 import QueryProvider from "@/providers/query-provider";
 
@@ -23,7 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <head>
+        <link rel="preconnect" href="https://ik.imagekit.io" />
+      </head>
+      <body className={`${satoshi.variable} ${integralCF.variable} font-satoshi antialiased`}>
         <QueryProvider>
           <StateProvider>
             <ThemeProvider
@@ -43,3 +47,4 @@ export default function RootLayout({
     </html>
   );
 }
+
