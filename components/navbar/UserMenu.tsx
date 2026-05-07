@@ -13,6 +13,7 @@ import { useState } from "react";
 import ROUTES from "@/constants/routes";
 import { SignOutSupabase } from "@/actions/userAction";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/stores/cartStore";
 import { useUser } from "@/stores/userStore";
 
 export default function UserMenu() {
@@ -20,10 +21,12 @@ export default function UserMenu() {
   const router = useRouter();
   const userContext = useUser();
   const userData = userContext.user;
+  const { clearCart } = useCart();
 
   const signOut = async () => {
     await SignOutSupabase();
     userContext.resetUser();
+    await clearCart();
     router.replace(ROUTES.SIGNIN);
     setOpen(false);
   };

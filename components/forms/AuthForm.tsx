@@ -12,6 +12,7 @@ import {
 import { GetUser, SignInSupabase, SignUpSupabase } from "@/actions/userAction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/stores/userStore";
+import { useCart } from "@/stores/cartStore";
 
 interface AuthFormProps {
   fromType: string;
@@ -29,7 +30,8 @@ export default function AuthForm({ fromType }: AuthFormProps) {
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { updateUser } = useUser();
-  const router = useRouter();
+  const {initCart} = useCart()
+  const router = useRouter()
   const schema =
     fromType == "Sign Up" ? signUpValidationSchema : signInValidationSchema;
 
@@ -40,10 +42,10 @@ export default function AuthForm({ fromType }: AuthFormProps) {
   const onSubmit = async (values: UserData) => {
     setApiError("");
     setIsPending(true);
-
+    
     try {
       let errorMessage = "";
-
+      
       if (fromType === "Sign Up") {
         const result = await SignUpSupabase(values);
         if (!result.success) errorMessage = result.message;
@@ -51,34 +53,30 @@ export default function AuthForm({ fromType }: AuthFormProps) {
         const result = await SignInSupabase(values);
         if (!result.success) errorMessage = result.message;
       }
-
+      
       if (errorMessage) {
         setApiError(errorMessage);
         setIsPending(false);
         return;
       }
-
+      
       const userRes = await GetUser();
       if (userRes.success && userRes.data) {
         updateUser(userRes.data);
         try {
+          await initCart();
         } catch (cartError) {
           console.error("Cart initialization error:", cartError);
         }
         router.replace(ROUTES.HOME);
       } else {
-        setApiError(
-          userRes.success === false
-            ? userRes.message
-            : "Failed to get user profile",
-        );
+        setApiError(userRes.success === false ? userRes.message : "Failed to get user profile");
         setIsPending(false);
       }
+      
     } catch (error) {
       console.error("Auth error:", error);
-      setApiError(
-        error instanceof Error ? error.message : "An unexpected error occurred",
-      );
+      setApiError(error instanceof Error ? error.message : "An unexpected error occurred");
       setIsPending(false);
     }
   };
@@ -93,6 +91,8 @@ export default function AuthForm({ fromType }: AuthFormProps) {
     validationSchema: schema,
     onSubmit,
   });
+  
+
 
   return (
     <div className="w-full max-w-sm mx-auto">
@@ -102,15 +102,13 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             {apiError}
           </div>
         )}
-
+    
         {fromType === "Sign Up" && (
           <div className="relative">
             <input
               id="name"
               className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
-                formik.touched.name && formik.errors.name
-                  ? "ring-2 ring-red-500/20 bg-red-50/50"
-                  : ""
+                formik.touched.name && formik.errors.name ? "ring-2 ring-red-500/20 bg-red-50/50" : ""
               }`}
               placeholder="Full Name"
               type="text"
@@ -131,9 +129,7 @@ export default function AuthForm({ fromType }: AuthFormProps) {
           <input
             id="email"
             className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
-              formik.touched.email && formik.errors.email
-                ? "ring-2 ring-red-500/20 bg-red-50/50"
-                : ""
+              formik.touched.email && formik.errors.email ? "ring-2 ring-red-500/20 bg-red-50/50" : ""
             }`}
             placeholder="Email Address"
             type="email"
@@ -153,13 +149,9 @@ export default function AuthForm({ fromType }: AuthFormProps) {
           <input
             id="password"
             className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
-              formik.touched.password && formik.errors.password
-                ? "ring-2 ring-red-500/20 bg-red-50/50"
-                : ""
+              formik.touched.password && formik.errors.password ? "ring-2 ring-red-500/20 bg-red-50/50" : ""
             }`}
-            placeholder={
-              fromType === "Sign Up" ? "Create Password" : "Password"
-            }
+            placeholder={fromType === "Sign Up" ? "Create Password" : "Password"}
             type={showPassword ? "text" : "password"}
             name="password"
             value={formik.values.password}
@@ -185,9 +177,7 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             <input
               id="phone"
               className={`w-full px-6 py-4 bg-gray-100/50 border-none font-satoshi  focus:outline-none focus:ring-2 focus:ring-black/5 transition-all placeholder:text-black/30 ${
-                formik.touched.phone && formik.errors.phone
-                  ? "ring-2 ring-red-500/20 bg-red-50/50"
-                  : ""
+                formik.touched.phone && formik.errors.phone ? "ring-2 ring-red-500/20 bg-red-50/50" : ""
               }`}
               placeholder="Phone Number"
               type="tel"
@@ -219,13 +209,12 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             )}
           </button>
         </div>
+
       </form>
 
       <div className="mt-4 text-center">
         <p className="text-xs font-medium text-black/40">
-          {fromType === "Sign Up"
-            ? "Already have an account? "
-            : "Don't have an account? "}
+          {fromType === "Sign Up" ? "Already have an account? " : "Don't have an account? "}
           <Link
             className="text-black font-bold hover:underline underline-offset-4"
             href={fromType === "Sign Up" ? ROUTES.SIGNIN : ROUTES.SIGNUP}

@@ -1,15 +1,13 @@
 "use client";
 
 import ROUTES from "@/constants/routes";
-// import { useCart } from "@/stores/cartStore";
+import { useCart } from "@/stores/cartStore";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
 
 export default function CartIcon() {
-  // const { quantity } = useCart();
-  const [quantity, setQuantity] = useState<number | null>(null);
-  setQuantity(0)
+  const { quantity } = useCart();
+
   return (
     <div>
       <Link
