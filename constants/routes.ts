@@ -1,9 +1,25 @@
 const ROUTES = {
-
+  HOME: "/",
+  SIGNIN: "/sign-in",
+  SIGNUP: "/sign-up",
+  PROFILE: "/profile",
+  ORDERS: "/orders",
+  WALLET: "/wallet",
+  CART: "/cart",
+  SETTINGS: "/settings",
+  PRODUCTS: "/products",
+  TOP_SELLING: "/products?sort=top_selling",
+  NEW_ARRIVALS: "/products?sort=new_arrivals",
+  CHECKOUT: "/checkout",
+  ORDER_SUCCESS: "/order-success",
+  ADMIN: "/admin",
+  ADMIN_PRODUCTS: "/admin/products",
+  ADMIN_CATEGORIES: "/admin/categories",
+  ADMIN_ORDERS: "/admin/orders",
+  ADMIN_PROMO_CODES: "/admin/promo-codes",
+  ADMIN_DELIVERY: "/admin/delivery",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_RANKS: "/admin/ranks",
 };
 
 export default ROUTES;
-
-// example
-// USERS = '/users'
-// USER = (id: string) => `/users/${id}`
