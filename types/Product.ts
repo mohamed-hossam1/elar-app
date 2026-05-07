@@ -25,3 +25,25 @@ export type ProductListItem = {
   min_price: number;
   min_price_before: number;
 };
+
+export type ProductVariant = {
+  id: number;
+  product_id: number;
+  color: string;
+  size: string;
+  price: number;
+  price_before: number | null;
+  stock: number;
+  sku: string | null;
+};
+
+export type ProductImage = {
+  id: number;
+  product_id: number;
+  url: string;
+};
+
+export type ProductDetails = Product & {
+  variants: ProductVariant[];
+  images: ProductImage[];
+};
