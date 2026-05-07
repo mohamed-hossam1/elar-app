@@ -10,3 +10,4 @@ export function createAdminClient() {
 
   return createSupabaseClient(url, key);
 }
+

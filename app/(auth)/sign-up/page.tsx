@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getCanonicalUrl } from "@/lib/metadata/canonical";
+import AuthForm from "@/components/forms/AuthForm";
 
 export const metadata: Metadata = {
   title: "Sign Up | ELAR",
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignUp() {
-  // return <AuthForm fromType="Sign Up" />;
+  return <AuthForm fromType="Sign Up" />;
 }
