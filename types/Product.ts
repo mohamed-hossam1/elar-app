@@ -47,3 +47,26 @@ export type ProductDetails = Product & {
   variants: ProductVariant[];
   images: ProductImage[];
 };
+
+
+export type SortOption = 'newest' | 'price_asc' | 'price_desc' | 'top_selling' | 'new_arrivals';
+
+export type ProductListingQuery = {
+  search?: string;
+  category?: string;
+  sort: SortOption;
+  min_price?: number;
+  max_price?: number;
+  in_stock: boolean;
+  on_sale: boolean;
+  page: number;
+  pageSize: number;
+};
+
+export type ProductPaginationState = {
+  data: ProductListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
+};

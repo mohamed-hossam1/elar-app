@@ -47,7 +47,7 @@ export default function ProductCard({
       </div>
 
       <div className="flex flex-col mt-3 flex-1">
-        <h3 className="font-satoshi font-bold text-sm sm:text-lg line-clamp-1 uppercase tracking-[0.02em] min-h-8 sm:min-h-10 leading-tight break-words">
+        <h3 className="font-satoshi font-bold text-sm sm:text-lg line-clamp-1 uppercase tracking-[0.02em] min-h-8 sm:min-h-10 leading-tight wrap-break-word">
           {title}
         </h3>
 

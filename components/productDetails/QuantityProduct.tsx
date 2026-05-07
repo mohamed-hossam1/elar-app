@@ -283,7 +283,7 @@ export default function QuantityProduct({ product }: { product: ProductDetails }
       </div>
 
       
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-[100] sm:hidden flex gap-4 items-center animate-in slide-in-from-bottom duration-300">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-100 sm:hidden flex gap-4 items-center animate-in slide-in-from-bottom duration-300">
         {!isOutOfStock && (
           <div className="flex flex-col pr-2 border-r border-black/10 min-w-[100px]">
             <span className="text-[10px] font-bold text-black/60 uppercase tracking-widest">Total</span>

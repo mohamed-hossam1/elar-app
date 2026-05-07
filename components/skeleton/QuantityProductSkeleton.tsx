@@ -37,7 +37,7 @@ export default function QuantityProductSkeleton() {
         <div className="hidden sm:block flex-1 h-14 bg-black opacity-10"></div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-[100] sm:hidden flex gap-4 items-center">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black p-4 z-100 sm:hidden flex gap-4 items-center">
         <div className="flex flex-col pr-2 border-r border-black/10 min-w-[100px]">
           <div className="h-2 w-10 bg-gray-100 mb-1"></div>
           <div className="h-6 w-20 bg-gray-200"></div>
