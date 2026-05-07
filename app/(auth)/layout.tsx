@@ -1,31 +1,52 @@
-import ROUTES from "@/constants/routes";
-import Link from "next/link";
-import React from "react";
+import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar";
+import React, { Suspense } from "react";
+import { Metadata } from "next";
+import { getCanonicalUrl } from "@/lib/metadata/canonical";
+import { getOgMetadata, getTwitterCardMetadata } from "@/lib/metadata/socialCards";
+import { getOrganizationSchema, getWebsiteSchema } from "@/lib/metadata/structuredData";
 
-export default function AuthLayout({
+export const metadata: Metadata = {
+  title: {
+    template: "%s | ELAR",
+    default: "ELAR | Premium Men's Fashion in Egypt",
+  },
+  alternates: {
+    canonical: getCanonicalUrl("/"),
+  },
+  openGraph: getOgMetadata(
+    "ELAR | Men's Fashion Egypt",
+    "Shop high-quality men's clothing in Egypt. Premium t-shirts, shirts, pants, and more with fast delivery."
+  ),
+  twitter: getTwitterCardMetadata(
+    "ELAR | Men's Fashion Egypt",
+    "Shop high-quality men's clothing in Egypt. Premium t-shirts, shirts, pants, and more with fast delivery."
+  ),
+};
+
+export default function StoreLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-satoshi overflow-y-auto">
-      <div className="w-full max-w-md text-center pb-10">
-        <Link href={ROUTES.HOME} className="inline-block hover:opacity-80 transition-opacity">
-          <span className="text-4xl font-integral font-black tracking-widest text-black">
-            ELAR
-          </span>
-        </Link>
-        <h2 className="mt-5 text-center text-2xl sm:text-3xl font-satoshi font-bold tracking-tight text-black">
-          Welcome to Elar
-        </h2>
-        <p className="mt-2 text-center text-sm text-black/40 font-satoshi">
-          Sign in to your account or create a new one to continue.
-        </p>
-      </div>
+  const organizationSchema = getOrganizationSchema();
+  const websiteSchema = getWebsiteSchema();
 
-      <div className="sm:mx-auto w-full sm:max-w-md px-4 sm:px-0">
-        {children}
-      </div>
-    </div>
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <Suspense fallback={<div className="h-20 w-full bg-white border-b border-black" />}>
+        <Navbar />
+      </Suspense>
+      {children}
+      <Footer />
+    </>
   );
 }
