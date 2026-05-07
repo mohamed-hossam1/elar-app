@@ -275,3 +275,45 @@ export async function createOrder(
     return { success: false, message: err.message || "Unexpected error" };
   }
 }
+
+export async function getOrderItems(orderId: number) {
+  const { userId, guestId } = await getCurrentOrderScope();
+  const orderRes = await getOrderById(orderId, userId, guestId);
+
+  if (!orderRes.success) {
+    return [];
+  }
+
+  return orderRes.data.items || [];
+}
+
+export async function getOrderById(
+  orderId: number,
+  userId?: string,
+  guestId?: string
+): Promise<{ success: true; data: Order } | { success: false; message: string }> {
+  if (!userId && !guestId) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const supabase = await createClient();
+
+  let query = supabase.from("orders").select(`
+    *,
+    items:order_items (*, variant:product_variants(stock))
+  `).eq("id", orderId);
+
+  if (userId) {
+    query = query.eq("user_id", userId);
+  } else if (guestId) {
+    query = query.eq("guest_id", guestId).is("user_id", null);
+  }
+
+  const { data: order, error } = await query.single();
+
+  if (error || !order) {
+    return { success: false, message: "Order not found" };
+  }
+
+  return { success: true, data: order as Order };
+}
