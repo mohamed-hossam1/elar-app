@@ -4,11 +4,12 @@ import { Address } from "@/types/Address";
 import { deleteAddress } from "@/actions/addressAction";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+
 interface SavedAddressListProps {
   addresses: Address[];
   selectedAddressId: number | null;
   onSelectAddress: (address: Address) => void;
-  onAddressDeleted: (addressId: number) => void;
+  onAddressDeleted: (addressId:number) => void;
 }
 
 export default function SavedAddressList({
@@ -19,11 +20,7 @@ export default function SavedAddressList({
 }: SavedAddressListProps) {
   const queryClient = useQueryClient();
 
-  const {
-    mutate: deleteAddressMutate,
-    isPending,
-    variables: deletingId,
-  } = useMutation({
+  const { mutate: deleteAddressMutate, isPending, variables: deletingId } = useMutation({
     mutationFn: async (addressId: number) => {
       const res = await deleteAddress(addressId);
       if (!res.success) throw new Error(res.message);
@@ -92,6 +89,7 @@ export default function SavedAddressList({
           >
             {isPending && deletingId === address.id ? "Deleting..." : "Delete"}
           </button>
+
         </div>
       ))}
     </div>

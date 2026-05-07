@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/stores/cartStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CheckoutSkeleton from "../skeleton/CheckoutSkeleton";
 import OrderSummary from "../cart/OrderSummary";
 import AddressStep from "./Address/AddressStep";
@@ -9,11 +9,14 @@ import { getAddresses } from "@/actions/addressAction";
 import { getDeliveryFee } from "@/actions/deliveryAction";
 import { useQuery } from "@tanstack/react-query";
 
+import PaymentStep from "./Payment/PaymentStep";
 import { useRouter } from "next/navigation";
+import { createOrder } from "@/actions/ordersAction";
 import ROUTES from "@/constants/routes";
 import { useUser } from "@/stores/userStore";
 import GuestAddressStep from "./Address/Guestaddressstep";
 import { Address } from "@/types/Address";
+import { getOrCreateGuestId, setGuestId } from "@/lib/guest";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, ShoppingBag, Loader2 } from "lucide-react";
 import Image from "@/components/imageKit/ImageOptimization";
@@ -23,7 +26,9 @@ export default function CheckoutList() {
     cart,
     price,
     isLoading: cartLoading,
-
+    clearCart,
+    appliedPromo,
+    setAppliedPromo,
   } = useCart();
 
   const { user } = useUser();
@@ -156,7 +161,70 @@ export default function CheckoutList() {
 
     setIsPlacingOrder(true);
 
-    
+    try {
+      const isConditionMet = appliedPromo
+        ? price >= appliedPromo.min_purchase
+        : true;
+      const discountAmount =
+        appliedPromo && isConditionMet
+          ? appliedPromo.type === "percentage"
+            ? (price * (appliedPromo.value || 0)) / 100
+            : Math.min(price, appliedPromo.value || 0)
+          : 0;
+
+      const subtotalAfterDiscount = Math.max(0, price - discountAmount);
+      const total = subtotalAfterDiscount + deliveryFee;
+
+      let paymentImage: string | undefined = undefined;
+      const p = selectedPayment.toLowerCase();
+      if (p === "vodafone cash" && vodafoneImageUrl) {
+        paymentImage = vodafoneImageUrl;
+      } else if (p === "instapay" && instapayImageUrl) {
+        paymentImage = instapayImageUrl;
+      }
+
+      const guestId = !user ? getOrCreateGuestId() : undefined;
+      const result = await createOrder(
+        {
+          subtotal: price,
+          discount_amount: discountAmount,
+          total_price: total,
+          delivery_fee: deliveryFee,
+          payment_method: selectedPayment as string,
+          payment_image: paymentImage, 
+          coupon_id: appliedPromo?.id,
+          user_id: user?.id,
+          guest_id: guestId,
+          city: user ? selectedAddress?.city! : guestAddress.city,
+          area: user ? selectedAddress?.area! : guestAddress.area,
+          address_line: user
+            ? selectedAddress?.address_line!
+            : guestAddress.address_line,
+          user_name: user ? user.name || "" : guestAddress.name,
+          phone: user ? selectedAddress?.phone || "" : guestAddress.phone,
+        },
+        Object.values(cart),
+      );
+
+      if (result.success) {
+        if (!user && guestId) {
+          setGuestId(guestId);
+        }
+        await clearCart();
+        setAppliedPromo(null);
+
+        router.push(
+          `${ROUTES.ORDER_SUCCESS}?orderId=${result.data.id}&isGuest=${!user}`,
+        );
+      } else {
+        toast.error(`Failed to place order: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Place order error:", error);
+      toast.error("An error occurred while placing your order");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   return (
@@ -251,7 +319,14 @@ export default function CheckoutList() {
               Payment Method
             </h2>
             <div className="border border-black rounded-none bg-white p-6 sm:p-8">
-              {/* {payment} */}
+              <PaymentStep
+                onSelectPayment={onSelectPayment}
+                selectedPayment={selectedPayment}
+                onVodafoneImageChange={setVodafoneImageUrl}
+                onInstapayImageChange={setInstapayImageUrl}
+                vodafoneNumber="01013429234"
+                instapayLink="https://instapay.com"
+              />
             </div>
           </section>
         </div>

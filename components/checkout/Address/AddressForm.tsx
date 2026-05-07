@@ -6,9 +6,6 @@ import { getCities } from "@/actions/deliveryAction";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 
-
-
-
 interface AddressFormProps {
   onSuccess: () => void;
   onCancel: () => void;
@@ -17,7 +14,6 @@ interface AddressFormProps {
 export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const queryClient = useQueryClient();
-
 
   const { data: cities = [], isLoading: isCitiesLoading } = useQuery({
     queryKey: ["cities"],
@@ -35,8 +31,6 @@ export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
     area: "",
     address_line: "",
   });
-
-
 
   const validatePhone = (phone: string) => {
     const phoneRegex = /^(010|011|012|015)[0-9]{8}$/;
@@ -62,9 +56,8 @@ export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
-    
+
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.full_name) newErrors.full_name = "Name is required";
@@ -76,7 +69,8 @@ export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
 
     if (!formData.city) newErrors.city = "City is required";
     if (!formData.area) newErrors.area = "Area is required";
-    if (!formData.address_line) newErrors.address_line = "Address details are required";
+    if (!formData.address_line)
+      newErrors.address_line = "Address details are required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -87,11 +81,10 @@ export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
     addAddressMutate(formData as any);
   };
 
-
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -238,8 +231,6 @@ export default function AddressForm({ onSuccess, onCancel }: AddressFormProps) {
             "Save Address"
           )}
         </button>
-
-
       </form>
     </div>
   );
