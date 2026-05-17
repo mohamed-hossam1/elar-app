@@ -2,7 +2,6 @@ import Image from "@/components/imageKit/ImageOptimization";
 import Link from "next/link";
 import { Category } from "@/types/Category";
 import AnimatedSection from "./AnimatedSection";
-import * as motion from "motion/react-client"
 
 export default function BrowseByStyle({
   categories,
@@ -21,17 +20,7 @@ export default function BrowseByStyle({
 
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 sm:gap-x-12 sm:gap-y-14 lg:gap-x-16">
             {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 24, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-40px" }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.08,
-                    ease: [0.25, 0.1, 0.25, 1] as const,
-                  }}
-              >
+              <div key={category.id}>
                 <Link
                   href={`/products?category=${encodeURIComponent(category.slug)}`}
                   className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-1 active:translate-y-0.5"
@@ -57,7 +46,7 @@ export default function BrowseByStyle({
                     {category.title}
                   </span>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

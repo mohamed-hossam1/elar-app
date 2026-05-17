@@ -237,11 +237,8 @@ export default function CheckoutList() {
             Checkout
           </h1>
           {!user && (
-            <motion.p
+            <p
               className="text-[10px] md:text-xs text-black/60 mt-4 uppercase font-bold tracking-[0.2em] leading-relaxed"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
             >
               Buying as guest?
               <a
@@ -251,7 +248,7 @@ export default function CheckoutList() {
                 Sign in
               </a>{" "}
               to sync your order history.
-            </motion.p>
+            </p>
           )}
         </div>
       </AnimatedSection>

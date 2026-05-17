@@ -201,6 +201,19 @@ html {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes as-up { from { opacity: 0; transform: translateY(var(--as-d)); } to { opacity: 1; transform: translateY(0); } }
+@keyframes as-down { from { opacity: 0; transform: translateY(calc(var(--as-d) * -1)); } to { opacity: 1; transform: translateY(0); } }
+@keyframes as-left { from { opacity: 0; transform: translateX(var(--as-d)); } to { opacity: 1; transform: translateX(0); } }
+@keyframes as-right { from { opacity: 0; transform: translateX(calc(var(--as-d) * -1)); } to { opacity: 1; transform: translateX(0); } }
+@keyframes as-none { from { opacity: 0; } to { opacity: 1; } }
+@keyframes is-slide-right { from { transform: translateX(300px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes is-slide-left { from { transform: translateX(-300px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes qp-priceIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes qp-fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes qp-fadeInLeft { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes qp-fadeInRight { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes qp-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 
 .custom-scroll::-webkit-scrollbar {
   width: 0px;

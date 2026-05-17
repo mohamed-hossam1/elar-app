@@ -100,11 +100,8 @@ export default function AuthForm({ fromType }: AuthFormProps) {
   });
 
   return (
-    <motion.div
+    <div
       className="w-full max-w-sm mx-auto"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] as const }}
     >
       <form className="space-y-4 w-full" onSubmit={formik.handleSubmit}>
         {apiError && (
@@ -119,11 +116,8 @@ export default function AuthForm({ fromType }: AuthFormProps) {
         )}
 
         {fromType === "Sign Up" && (
-          <motion.div
+          <div
             className="relative"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.35 }}
           >
             <input
               id="name"
@@ -144,14 +138,11 @@ export default function AuthForm({ fromType }: AuthFormProps) {
                 {formik.errors.name}
               </div>
             )}
-          </motion.div>
+          </div>
         )}
 
-        <motion.div
+        <div
           className="relative"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.35 }}
         >
           <input
             id="email"
@@ -172,13 +163,10 @@ export default function AuthForm({ fromType }: AuthFormProps) {
               {formik.errors.email}
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
+        <div
           className="relative"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.35 }}
         >
           <input
             id="password"
@@ -209,14 +197,11 @@ export default function AuthForm({ fromType }: AuthFormProps) {
               {formik.errors.password}
             </div>
           )}
-        </motion.div>
+        </div>
 
         {fromType === "Sign Up" && (
-          <motion.div
+          <div
             className="relative"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.35 }}
           >
             <input
               id="phone"
@@ -237,7 +222,7 @@ export default function AuthForm({ fromType }: AuthFormProps) {
                 {formik.errors.phone}
               </div>
             )}
-          </motion.div>
+          </div>
         )}
 
         <div className="pt-2">
@@ -263,11 +248,8 @@ export default function AuthForm({ fromType }: AuthFormProps) {
         </div>
       </form>
 
-      <motion.div
+      <div
         className="mt-4 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.3 }}
       >
         <p className="text-xs font-medium text-black/40">
           {fromType === "Sign Up"
@@ -280,7 +262,7 @@ export default function AuthForm({ fromType }: AuthFormProps) {
             {fromType === "Sign Up" ? "Sign In" : "Sign Up"}
           </Link>
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
-import * as motion from "motion/react-client";
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useRef, useEffect, useLayoutEffect, useState } from "react";
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -20,34 +21,60 @@ export default function AnimatedSection({
   once = true,
   distance = 48,
 }: AnimatedSectionProps) {
-  const directionOffset = {
-    up: { y: distance },
-    down: { y: -distance },
-    left: { x: distance },
-    right: { x: -distance },
-    none: {},
-  };
+  const ref = useRef<HTMLDivElement>(null);
+  const [phase, setPhase] = useState<"init" | "visible" | "hidden" | "animating">("init");
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const isInViewport = rect.top < window.innerHeight - 80 && rect.bottom > 0;
+    setPhase(isInViewport ? "visible" : "hidden");
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "hidden") return;
+
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setPhase("animating");
+          if (once) observer.unobserve(el);
+        } else if (!once) {
+          setPhase("hidden");
+        }
+      },
+      { rootMargin: "-80px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [once, phase]);
+
+  let style: React.CSSProperties | undefined;
+  switch (phase) {
+    case "init":
+      break;
+    case "visible":
+      break;
+    case "hidden":
+      style = { opacity: 0 };
+      break;
+    case "animating":
+      style = {
+        ["--as-d" as string]: `${distance}px`,
+        animation: `as-${direction} ${duration}s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s forwards`,
+        willChange: "transform, opacity",
+      };
+      break;
+  }
 
   return (
-    <motion.div
-      className={className}
-      initial={{
-        opacity: 0,
-        ...directionOffset[direction],
-      }}
-      whileInView={{
-        opacity: 1,
-        x: 0,
-        y: 0,
-      }}
-      viewport={{ once, margin: "-80px" }}
-      transition={{
-        duration,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
+    <div ref={ref} className={className} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }

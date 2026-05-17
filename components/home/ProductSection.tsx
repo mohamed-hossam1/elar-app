@@ -2,7 +2,6 @@ import { ProductListItem } from "@/types/Product";
 import ProductCard from "../ProductCard";
 import Link from "next/link";
 import AnimatedSection from "./AnimatedSection";
-import * as motion from "motion/react-client"
 
 interface ProductSectionProps {
   title: string;
@@ -32,19 +31,9 @@ export default function ProductSection({
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-6 mb-8 sm:mb-12 lg:mb-14">
           {displayedProducts.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.06,
-                ease: [0.25, 0.1, 0.25, 1] as const,
-              }}
-            >
+            <div key={product.id}>
               <ProductCard product={product} priority={priority && index < 4} />
-            </motion.div>
+            </div>
           ))}
         </div>
 

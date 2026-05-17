@@ -6,11 +6,10 @@ import {
 import ProductDetails from "./ProductDetails";
 
 export default async function ProductPageContent({
-  params,
+  id,
 }: {
-  params: Promise<{ id: string }>;
+  id: string;
 }) {
-  const { id } = await params;
   const productRes = await getProductById(Number(id));
   const product = productRes.success ? productRes.data : null;
 

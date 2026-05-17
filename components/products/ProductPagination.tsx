@@ -59,11 +59,8 @@ export default function ProductPagination({
     return (
       <div className="flex items-center gap-1 sm:gap-2">
         {start > 1 && (
-          <motion.div
+          <div
             className="flex items-center"
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
           >
             <button
               onClick={() => handlePageChange(1)}
@@ -72,16 +69,13 @@ export default function ProductPagination({
               1
             </button>
             <span className="text-black/40 px-1">...</span>
-          </motion.div>
-        )}
-        {pages}
-        {end < pageCount && (
-          <motion.div
-            className="flex items-center"
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+            </div>
+          )}
+          {pages}
+          {end < pageCount && (
+            <div
+              className="flex items-center"
+            >
             <span className="text-black/40 px-1">...</span>
             <button
               onClick={() => handlePageChange(pageCount)}
@@ -89,7 +83,7 @@ export default function ProductPagination({
             >
               {pageCount}
             </button>
-          </motion.div>
+          </div>
         )}
       </div>
     );

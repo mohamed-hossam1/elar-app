@@ -100,11 +100,8 @@ export default function CartList() {
   const hasItems = cartEntries.length > 0;
 
   return (
-    <motion.div
+    <div
       className="max-w-[1450px] px-3 md:px-5 m-auto mt-6 md:mt-12 mb-10 font-satoshi"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const }}
     >
       <div className="mb-6 md:mb-10">
         <h1 className="text-2xl md:text-3xl font-bold uppercase font-integral">Shopping Cart</h1>
@@ -140,13 +137,7 @@ export default function CartList() {
                   <motion.div
                     key={variantId}
                     className="p-3 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b last:border-b-0 hover:bg-gray-50/50 transition-colors"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: index * 0.05,
-                      ease: [0.25, 0.1, 0.25, 1] as const,
-                    }}
+                    initial={false}
                   >
                     <div className="w-24 h-24 md:w-32 md:h-32 relative bg-white border border-black flex items-center justify-center shrink-0 overflow-hidden">
                       <Image
@@ -252,11 +243,8 @@ export default function CartList() {
               })}
             </div>
           ) : (
-            <motion.div
+            <div
               className="border border-black p-12 text-center bg-white"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
             >
               <div className="w-20 h-20 bg-black flex items-center justify-center mx-auto mb-6">
                 <ShoppingBag className="w-10 h-10 text-white" />
@@ -269,15 +257,12 @@ export default function CartList() {
               >
                 Start Shopping
               </Link>
-            </motion.div>
+            </div>
           )}
 
           {hasItems && (
-            <motion.div
+            <div
               className="mt-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
             >
               <Link
                 href={ROUTES.PRODUCTS}
@@ -286,12 +271,12 @@ export default function CartList() {
                 <ArrowLeft className="size-4" />
                 Continue Shopping
               </Link>
-            </motion.div>
+            </div>
           )}
         </div>
 
         <OrderSummary price={price} isCart={true} deliveryFee={0} />
       </div>
-    </motion.div>
+    </div>
   );
 }

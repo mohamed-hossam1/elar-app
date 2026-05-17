@@ -1,7 +1,6 @@
 "use client";
 
 import { useCart } from "@/stores/cartStore";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProductDetails, ProductVariant } from "@/types/Product";
 import Toast from "@/components/ui/Toast";
