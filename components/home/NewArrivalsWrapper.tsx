@@ -4,7 +4,7 @@ import ROUTES from "@/constants/routes";
 import EmptyState from "@/components/ui/EmptyState";
 
 export default async function NewArrivalsWrapper() {
-  const newArrivalsRes = await getNewArrivals(10);
+  const newArrivalsRes = await getNewArrivals();
   const newArrivals =
     newArrivalsRes.success && newArrivalsRes.data ? newArrivalsRes.data : [];
 

@@ -51,6 +51,9 @@ export function RevenueOrdersTrend({ trends }: RevenueOrdersTrendProps) {
     return `${sign} ${Math.abs(value).toFixed(1)}%`;
   };
 
+  const maxRevenue = Math.max(0, ...trends.revenueSeries.map((p) => p.value));
+  const maxOrders = Math.max(0, ...trends.ordersSeries.map((p) => p.value));
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -91,35 +94,70 @@ export function RevenueOrdersTrend({ trends }: RevenueOrdersTrendProps) {
         </div>
       </div>
 
-      <div className="relative border border-black overflow-hidden bg-white">
-        <div className="overflow-x-auto max-h-75">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-black text-white text-[10px] font-black uppercase tracking-widest">
-              <tr>
-                <th className="text-left py-3 px-4">Timeline</th>
-                <th className="text-right py-3 px-4">Revenue</th>
-                <th className="text-right py-3 px-4">Orders</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-black/10">
-              {trends.revenueSeries.map((point, idx) => (
-                <tr
-                  key={point.date}
-                  className="hover:bg-black/3 transition-colors group"
-                >
-                  <td className="text-left py-3 px-4 text-black/60 font-medium group-hover:text-black">
+      <div className="relative border border-black bg-white p-4 sm:p-6 pt-16">
+        <div 
+          className="w-full flex items-end gap-[2px] sm:gap-1 relative" 
+          style={{ height: "250px" }}
+        >
+          {trends.revenueSeries.map((point, idx) => {
+            const revenueHeight =
+              maxRevenue > 0 ? (point.value / maxRevenue) * 100 : 0;
+            const ordersVal = trends.ordersSeries[idx]?.value || 0;
+            const ordersHeight =
+              maxOrders > 0 ? (ordersVal / maxOrders) * 100 : 0;
+
+            return (
+              <div
+                key={point.date}
+                className="flex-1 h-full group relative flex items-end gap-[1px]"
+              >
+                {/* Tooltip */}
+                <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] p-2 sm:p-3 whitespace-nowrap z-10 pointer-events-none transition-opacity flex flex-col gap-1 shadow-xl rounded-sm">
+                  <p className="font-bold border-b border-white/20 pb-1 mb-1">
                     {point.date}
-                  </td>
-                  <td className="text-right py-3 px-4 font-bold">
-                    {formatCurrency(point.value)}
-                  </td>
-                  <td className="text-right py-3 px-4 font-bold text-black/40 group-hover:text-black">
-                    {trends.ordersSeries[idx]?.value || 0}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </p>
+                  <div className="flex items-center gap-4 justify-between">
+                    <span className="text-white/60">Revenue</span>
+                    <span className="font-mono">
+                      {formatCurrency(point.value)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 justify-between">
+                    <span className="text-white/60">Orders</span>
+                    <span className="font-mono">{ordersVal}</span>
+                  </div>
+                </div>
+
+                {/* Bars */}
+                <div
+                  className="w-1/2 bg-black/10 group-hover:bg-black/30 transition-colors rounded-t-[1px]"
+                  style={{ height: `${Math.max(0.5, ordersHeight)}%` }}
+                />
+                <div
+                  className="w-1/2 bg-black/40 group-hover:bg-black transition-colors rounded-t-[1px]"
+                  style={{ height: `${Math.max(0.5, revenueHeight)}%` }}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend & X-Axis label */}
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between border-t border-black/10 pt-4 gap-4">
+          <div className="text-[10px] font-bold text-black/40 uppercase tracking-widest">
+            {trends.revenueSeries[0]?.date || ""} -{" "}
+            {trends.revenueSeries[trends.revenueSeries.length - 1]?.date || ""}
+          </div>
+          <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-black/60">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 bg-black/40"></div>
+              <span>Revenue</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 bg-black/10"></div>
+              <span>Orders</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
