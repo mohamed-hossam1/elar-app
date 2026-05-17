@@ -6,8 +6,6 @@ import { QueryProvider } from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 import { satoshi, integralCF } from "@/lib/fonts";
-import { Suspense } from "react";
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://elar.app"),
   title: {
@@ -39,9 +37,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Suspense fallback={<div className="min-h-screen" />}>
-                {children}
-              </Suspense>
+              {children}
               <Toaster />
             </ThemeProvider>
           </StateProvider>
