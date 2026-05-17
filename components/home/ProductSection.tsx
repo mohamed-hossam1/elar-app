@@ -18,8 +18,6 @@ export default function ProductSection({
 }: ProductSectionProps) {
   if (!products || products.length === 0) return null;
 
-  const displayedProducts = products.slice(0, 8);
-
   return (
     <section className="w-full py-12 sm:py-18 lg:py-20 bg-white border-b border-black/10 last:border-none">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,8 +27,8 @@ export default function ProductSection({
           </h2>
         </AnimatedSection>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-6 mb-8 sm:mb-12 lg:mb-14">
-          {displayedProducts.map((product, index) => (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5 lg:gap-6 mb-8 sm:mb-12 lg:mb-14">
+          {products.map((product, index) => (
             <div key={product.id}>
               <ProductCard product={product} priority={priority && index < 4} />
             </div>

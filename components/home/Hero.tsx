@@ -7,7 +7,7 @@ import AnimatedCounter from "./AnimatedCounter";
 export default function Hero() {
   return (
     <section className="relative bg-hero-background w-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-black/[0.02] via-transparent to-black/[0.03] animate-gradient-shift bg-[length:200%_200%] pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-black/2 via-transparent to-black/3 animate-gradient-shift bg-size-[200%_200%] pointer-events-none" />
 
       <div className="absolute top-12 left-1/4 w-64 h-64 bg-white/30 rounded-full blur-3xl animate-pulse-soft pointer-events-none" />
       <div className="absolute bottom-8 right-1/3 w-48 h-48 bg-white/20 rounded-full blur-2xl animate-pulse-soft pointer-events-none" style={{ animationDelay: "1s" }} />
@@ -74,7 +74,7 @@ export default function Hero() {
 
           <div className="max-md:fixed max-md:-top-full max-md:opacity-0 md:relative md:flex w-full md:w-1/2 justify-center md:justify-end pb-6 lg:pb-0">
             <div className="animate-hero-scale-in relative w-full aspect-square max-w-[660px]">
-              <div className="absolute -inset-4 bg-gradient-to-br from-black/[0.03] via-transparent to-black/[0.03] rounded-full blur-2xl animate-spin-slow" />
+              <div className="absolute -inset-4 bg-linear-to-br from-black/3 via-transparent to-black/3 rounded-full blur-2xl animate-spin-slow" />
 
               <Image
                 src="/hero_image.webp"

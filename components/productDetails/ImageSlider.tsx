@@ -2,16 +2,17 @@
 
 import Image from "@/components/imageKit/ImageOptimization";
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 
 export default function ImageSlider({ images }: { images: string[] }) {
   const [curSlide, setCurSlide] = useState(0);
-  const [[page, direction], setPage] = useState([0, 0]);
+  const [prevSlide, setPrevSlide] = useState<number | null>(null);
+  const [direction, setDirection] = useState(0);
 
   const paginate = (newDirection: number) => {
+    setPrevSlide(curSlide);
+    setDirection(newDirection);
     const next = (curSlide + newDirection + images.length) % images.length;
     setCurSlide(next);
-    setPage([next, newDirection]);
   };
 
   const sliderRight = () => paginate(1);
@@ -49,21 +50,6 @@ export default function ImageSlider({ images }: { images: string[] }) {
     }
   };
 
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction > 0 ? -300 : 300,
-      opacity: 0,
-    }),
-  };
-
   if (images.length === 0) {
     return (
       <div className="mx-6 items-center relative">
@@ -83,34 +69,58 @@ export default function ImageSlider({ images }: { images: string[] }) {
       onMouseUp={handleMouseUp}
     >
       <div className="relative h-[350px] sm:h-[450px] md:h-[500px] mb-6 border border-black overflow-hidden bg-white">
-        <AnimatePresence mode="popLayout" custom={direction}>
-          <motion.div
-            key={curSlide}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.35 },
-            }}
-            className="absolute inset-0"
-          >
-            <Image
-              fill
-              className="object-contain"
-              src={images[curSlide]}
-              alt={`Image ${curSlide + 1}`}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
-              priority
-            />
-          </motion.div>
-        </AnimatePresence>
+        {images.map((image, i) => {
+          const isCurrent = i === curSlide;
+          const isPrev = i === prevSlide;
+          let x = 0;
+          let opacity = 0;
+          let zIndex = 0;
+
+          if (isCurrent) {
+            x = 0;
+            opacity = 1;
+            zIndex = 10;
+          } else if (isPrev) {
+            x = direction > 0 ? -300 : 300;
+            opacity = 0;
+            zIndex = 5;
+          } else {
+            x = direction > 0 ? 300 : -300;
+            opacity = 0;
+            zIndex = 0;
+          }
+
+          return (
+            <div
+              key={i}
+              className="absolute inset-0"
+              style={{
+                transform: `translateX(${x}px)`,
+                opacity,
+                zIndex,
+                visibility: isCurrent || isPrev ? "visible" : "hidden",
+                transition:
+                  isCurrent || isPrev
+                    ? "transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease-out"
+                    : "none",
+                willChange: "transform, opacity",
+              }}
+            >
+              <Image
+                fill
+                className="object-contain"
+                src={image}
+                alt={`Image ${i + 1}`}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
+                priority={isCurrent || i === 0}
+              />
+            </div>
+          );
+        })}
 
         <button
           onClick={sliderLeft}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-all z-10"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-all z-20"
           aria-label="Previous image"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -119,7 +129,7 @@ export default function ImageSlider({ images }: { images: string[] }) {
         </button>
         <button
           onClick={sliderRight}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-all z-10"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-all z-20"
           aria-label="Next image"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -128,21 +138,21 @@ export default function ImageSlider({ images }: { images: string[] }) {
         </button>
       </div>
 
-      <div className="flex gap-4 items-center justify-center flex-wrap">
+      <div className="flex gap-4 items-center overflow-x-auto py-2 px-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full max-w-[420px] mx-auto">
         {images.map((image, i) => (
-          <motion.div
+          <div
             key={i}
-            className={`cursor-pointer w-20 h-20 border transition-all duration-300 relative bg-white ${
+            className={`cursor-pointer shrink-0 w-20 h-20 border transition-all duration-300 ease-out relative bg-white hover:scale-105 active:scale-95 snap-center ${
               i === curSlide
                 ? "border-black ring-2 ring-black ring-offset-2"
                 : "border-gray-200 opacity-60 hover:opacity-100"
             }`}
             onClick={() => {
+              if (i === curSlide) return;
+              setPrevSlide(curSlide);
+              setDirection(i > curSlide ? 1 : -1);
               setCurSlide(i);
-              setPage([i, i > curSlide ? 1 : -1]);
             }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <Image
               fill
@@ -150,7 +160,7 @@ export default function ImageSlider({ images }: { images: string[] }) {
               src={image}
               alt={`Thumbnail ${i + 1}`}
             />
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

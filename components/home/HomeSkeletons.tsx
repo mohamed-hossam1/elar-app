@@ -20,7 +20,7 @@ export const ProductSectionSkeleton = ({ title }: { title: string }) => {
           {title}
         </h2>
         <div className="flex gap-4 sm:gap-5 overflow-hidden">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <div
               key={i}
               className="min-w-[190px] sm:min-w-[280px] md:min-w-[300px] shrink-0"

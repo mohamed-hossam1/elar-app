@@ -15,7 +15,7 @@ import {
 import { AdminProductFilters } from "@/types/Admin";
 
 export const getNewArrivals = async (
-  limit = 4,
+  limit = 5,
 ): Promise<
   | { success: true; data: ProductListItem[] }
   | { success: false; message: string }
@@ -42,7 +42,7 @@ export const getNewArrivals = async (
 };
 
 export const getTopSelling = async (
-  limit = 4,
+  limit = 5,
 ): Promise<
   | { success: true; data: ProductListItem[] }
   | { success: false; message: string }

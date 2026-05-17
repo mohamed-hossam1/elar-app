@@ -55,7 +55,9 @@ export default function StoreLayout({
       >
         <Navbar />
       </Suspense>
-      {children}
+      <div className="min-h-screen">
+        {children}
+      </div>
       <Footer />
     </>
   );
