@@ -37,14 +37,14 @@ export default function Toast({
   const getPositionClasses = () => {
     switch (position) {
       case "top-center":
-        return "top-6 left-1/2";
+        
       case "bottom-right":
-        return "bottom-6 right-6";
+        return "bottom-3 right-3";
       case "bottom-center":
-        return "bottom-6 left-1/2";
+        return "bottom-3 left-1/2";
       case "top-right":
       default:
-        return "top-6 right-6";
+        return "top-30 right-3";
     }
   };
 
@@ -55,24 +55,24 @@ export default function Toast({
           initial={{ opacity: 0, y: position.includes("top") ? -20 : 20, x: position.includes("center") ? "-50%" : 20 }}
           animate={{ opacity: 1, y: 0, x: position.includes("center") ? "-50%" : 0 }}
           exit={{ opacity: 0, y: position.includes("top") ? -20 : 20, x: position.includes("center") ? "-50%" : 20 }}
-          className={`fixed z-[9999] flex items-center gap-3 bg-black text-white px-6 py-4 border border-white/10 shadow-2xl min-w-[300px] max-w-[90vw] ${getPositionClasses()}`}
+          className={`fixed z-[9999] flex items-center gap-2 bg-black text-white px-4 py-2.5 border border-white/10 shadow-2xl min-w-[220px] max-w-[300px] ${getPositionClasses()}`}
         >
           {type === "success" && (
-            <CheckCircle2 className="w-5 h-5 text-white" />
+            <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
           )}
           {type === "error" && (
-            <AlertCircle className="w-5 h-5 text-red-500" />
+            <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
           )}
           
           <div className="flex-1">
-            <p className="text-sm font-medium font-satoshi tracking-wide">{message}</p>
+            <p className="text-[14px] font-medium font-satoshi tracking-wide">{message}</p>
           </div>
 
           <button 
             onClick={onClose}
-            className="p-1 hover:bg-white/10 transition-colors"
+            className="p-1 hover:bg-white/10 transition-colors shrink-0"
           >
-            <X className="w-4 h-4 text-white/50" />
+            <X className="w-3.5 h-3.5 text-white/50" />
           </button>
 
           <motion.div
